@@ -115,6 +115,7 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
                           ),
                         ),
                       ),
+                     
                       const SizedBox(height: 15),
                       _buildTextField(
                         'Sponsor Name',

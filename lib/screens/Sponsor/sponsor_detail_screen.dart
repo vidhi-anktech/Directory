@@ -22,15 +22,16 @@ class _SponsorDetailScreenState extends State<SponsorDetailScreen>
   late PageController controller;
   int curr = 0;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   controller =
-  //       PageController(initialPage: widget.index, viewportFraction: 0.8);
-  // }
+  @override
+  void initState() {
+    super.initState();
+    controller =
+        PageController(initialPage: widget.index, viewportFraction: 0.9);
+  }
 
   @override
   Widget build(BuildContext context) {
+    print("PRINTING VALUE OF SPONSORID AND SPONSOR DATA N SPONSOR DETAIL PAGE ${widget.userId},,${widget.sponsorData}");
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
@@ -47,14 +48,11 @@ class _SponsorDetailScreenState extends State<SponsorDetailScreen>
                   return Column(
                     children: [
                       SizedBox(
-                        height: 500,
+                        height: 600,
                         // width: 400,
                         width: MediaQuery.of(context).size.width,
                         child: PageView.builder(
-                            // controller: controller,
-                            controller: PageController(
-                                initialPage: widget.index,
-                                viewportFraction: 0.9),
+                            controller: controller,
                             padEnds: false,
                             itemCount: sponsors.length,
                             onPageChanged: (value) {

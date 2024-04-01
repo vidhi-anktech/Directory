@@ -1,85 +1,65 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_directory_app/screens/Sponsor/sponsor_card.dart';
 
-class SponsorDetailScreen extends StatefulWidget {
-  final int index;
+final _contactController = TextEditingController();
 
-  const SponsorDetailScreen({Key? key, required this.index}) : super(key: key);
-
-  @override
-  State<SponsorDetailScreen> createState() => _SponsorDetailScreenState();
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Phone Number Validation'),
+    ),
+    body: Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPhoneTextField(),
+          SizedBox(height: 16.0),
+          ElevatedButton(
+            onPressed: () {
+              String? validationResult = _validatePhoneNumber(_contactController.text);
+              if (validationResult == null) {
+                // Phone number is valid
+                // Add your logic here
+              } else {
+                // Phone number is invalid, show error message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(validationResult)),
+                );
+              }
+            },
+            child: Text('Submit'),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
-class _SponsorDetailScreenState extends State<SponsorDetailScreen> {
-  late int curr;
-  late List<DocumentSnapshot> sponsors;
+Widget _buildPhoneTextField() {
+  return TextFormField(
+    controller: _contactController,
+    keyboardType: TextInputType.phone,
+    decoration: InputDecoration(
+      labelText: 'Phone Number',
+      hintText: 'Enter phone number',
+      border: OutlineInputBorder(),
+    ),
+    validator: (value) {
+      if (value == null || value.isEmpty) {
+        return 'Phone number is required';
+      } else {
+        String? validationResult = _validatePhoneNumber(value);
+        return validationResult;
+      }
+    },
+  );
+}
 
-  @override
-  void initState() {
-    super.initState();
-    curr = widget.index;
+String? _validatePhoneNumber(String value) {
+  // Validate phone number
+  if (value.length != 10) {
+    return 'Phone number must be 10 digits';
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: SingleChildScrollView(
-        child: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection("directory-sponsors")
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else if (!snapshot.hasData || snapshot.data == null) {
-              return Center(child: Text("No Data Found"));
-            } else {
-              sponsors = snapshot.data!.docs;
-              return Column(
-                children: [
-                  SizedBox(
-                    height: 400,
-                    width: 400,
-                    // child: SponsorCard(
-                    //   sponsorName: sponsors[curr]['sponsorName'] ?? '',
-                    //   sponsorDescription: sponsors[curr]['sponsorDescription'] ?? '',
-                    //   sponsorImageUrl: sponsors[curr]['sponsorImage'] ?? '',
-                    // ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      FloatingActionButton(
-                        heroTag: "prevBtn",
-                        onPressed: () {
-                          setState(() {
-                            curr = (curr - 1).clamp(0, sponsors.length - 1);
-                          });
-                        },
-                        child: Icon(Icons.navigate_before),
-                      ),
-                      FloatingActionButton(
-                        heroTag: "nextBtn",
-                        onPressed: () {
-                          setState(() {
-                            curr = (curr + 1).clamp(0, sponsors.length - 1);
-                          });
-                        },
-                        child: Icon(Icons.navigate_next),
-                      ),
-                    ],
-                  ),
-                
-                ],
-              );
-            }
-          },
-        ),
-      ),
-    );
-  }
+  return null; // Return null if phone number is valid
 }

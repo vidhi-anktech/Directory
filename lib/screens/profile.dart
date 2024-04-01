@@ -15,19 +15,17 @@ class MyProfile extends ConsumerStatefulWidget {
 
 class _MyProfileState extends ConsumerState<MyProfile> {
   final textController = TextEditingController();
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-      ),
+      appBar: AppBar(),
       body: SingleChildScrollView(
-        child: Column(
+          child: Column(
         children: [
           _profileView(),
         ],
-        )
-      ),
+      )),
     );
   }
 
@@ -37,6 +35,7 @@ class _MyProfileState extends ConsumerState<MyProfile> {
     final notifier = ref.read(phoneNoProvider.notifier);
     notifier.setPhoneNo(phoneNo: '');
     sharedPref.setString(MyAppState.PHONENUM, '');
+    sharedPref.setBool(MyAppState.ISADMIN, false);
     await FirebaseAuth.instance.signOut();
     Navigator.popUntil(context, (route) => route.isFirst);
     Navigator.pushReplacement(

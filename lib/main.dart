@@ -31,7 +31,8 @@ class MyAppState extends ConsumerState<MyApp> {
    static const String PHONENUM = '';
    static const String STATEVALUE = '';
    static const String CITYVALUE = '';
-  //  static const String LASTINDEX = '';
+   static const String ISADMIN = 'admin';
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

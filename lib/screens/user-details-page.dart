@@ -1,11 +1,7 @@
-import 'package:anim_search_bar/anim_search_bar.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_directory_app/screens/edit_details_page.dart';
 import 'package:flutter_directory_app/main.dart';
-import 'package:flutter_directory_app/screens/profile.dart';
-import 'package:flutter_directory_app/screens/register_details_page.dart';
-import 'package:flutter_directory_app/screens/show_data.dart';
-import 'package:flutter_directory_app/screens/Sponsor/sponsors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,21 +18,15 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
   var textController = TextEditingController();
   var checkNum;
 
- int _currentIndex = 0;
-  _onTap(int index) async {
-    if (index < _children.length) {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (BuildContext context) => _children[index]));
-    
-    }
+
+  void _loadPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+    isAdmin = prefs.getBool(MyAppState.ISADMIN)!;
+    });
   }
 
-  final List<Widget> _children = [
-    ShowData(),
-    RegistrationPage(),
-    Sponsors(),
-    MyProfile(),
-  ];
+  bool isAdmin = false;
 
   check() async {
     var sharedPref = await SharedPreferences.getInstance();
@@ -45,63 +35,17 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
     return checkNum;
   }
 
+    @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
       ),
-      //  floatingActionButton: FloatingActionButton(
-      //     shape:
-      //         RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-      //     backgroundColor: Theme.of(context).colorScheme.primary,
-      //     onPressed: () {
-      //       Navigator.push(context,
-      //           MaterialPageRoute(builder: (context) => RegistrationPage()));
-      //     },
-      //     child: const Icon(
-      //       Icons.add,
-      //       color: Colors.white,
-      //     ),
-      //   ),
-        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        //     bottomNavigationBar: BottomNavigationBar(
-        //   currentIndex: _currentIndex,
-        //   type: BottomNavigationBarType.fixed,
-        //   selectedLabelStyle: const TextStyle(
-        //     fontSize: 10,
-        //     fontWeight: FontWeight.w400,
-        //     color: Color.fromRGBO(255, 64, 121, 1),
-        //   ),
-        //   unselectedLabelStyle: const TextStyle(
-        //       color: Color.fromRGBO(0, 0, 0, 1),
-        //       fontSize: 10,
-        //       fontWeight: FontWeight.w400),
-        //   items: const [
-        //     BottomNavigationBarItem(
-        //       icon: ImageIcon(AssetImage('assets/images/home.png')),
-        //       label: 'Home',
-        //     ),
-        //     BottomNavigationBarItem(
-        //       icon: ImageIcon(AssetImage('assets/images/add.png')),
-        //       label: 'Add',
-        //     ),
-        //     BottomNavigationBarItem(
-        //       icon: ImageIcon(AssetImage('assets/images/sponsors_icon.png')),
-        //       label: 'Sponsors',
-        //     ),
-        //     BottomNavigationBarItem(
-        //       icon: ImageIcon(AssetImage('assets/images/more.png')),
-        //       label: 'About',
-        //     )
-        //   ],
-        //   onTap: (index) {
-        //     setState(() {
-        //       _currentIndex = index;
-        //     });
-        //     _onTap(index);
-        //   },
-        // ),
-     
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
         child: Center(
@@ -127,10 +71,13 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                         var sharedPref = await SharedPreferences.getInstance();
                         var checkNum =
                             sharedPref.getString(MyAppState.PHONENUM );
+                              
+                            print("ARe you an admin? $isAdmin");
                             print("Value of checknum $checkNum");
                         if (checkNum == widget.userData['addedBy'] ||
                             checkNum == widget.userData['hContact'] ||
-                            checkNum == widget.userData['wContact']) {
+                            checkNum == widget.userData['wContact'] ||
+                            isAdmin == true) {
                           // ignore: use_build_context_synchronously
                           Navigator.push(
                             context,
@@ -147,10 +94,11 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                         future: check(),
                         builder: (context, snapshot) {
                           var checkNum = snapshot.data;
-
+                            print("ARe you an admin check? $isAdmin");
                           return (checkNum == widget.userData['addedBy'] ||
                                   checkNum == widget.userData['hContact'] ||
-                                  checkNum == widget.userData['wContact'])
+                                  checkNum == widget.userData['wContact'] ||
+                                  isAdmin == true)
                               ? Image.asset('assets/images/editIcon.png')
                               : Container(); 
                         },

@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_directory_app/main.dart';
+import 'package:flutter_directory_app/screens/main_screen.dart';
 import 'package:get/utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -436,7 +437,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         ),
       ),
     );
-  
   }
 
   Widget _buildCancelButton() {
@@ -461,6 +461,10 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                       headProfilePic = null;
                       wifeProfilePic = null;
                       clearRegScreen();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MainScreen()));
                       //  Navigator.pop(context);
                       // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const ShowData()));
                     },
@@ -518,15 +522,24 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
             false,
             TextInputType.text,
           ),
-          _buildTextField(
-            '$title Contact',
+          // _buildTextField(
+          //   '$title Contact',
+          // title == "House-holder"
+          //     ? headContactController
+          //     : wifeContactController,
+          //   title == "House-holder" ? validateHeadContact : false,
+          //   false,
+          //   TextInputType.phone,
+          // ),
+
+          _buildPhoneNumTextField(
+            '$title Phone Number',
             title == "House-holder"
                 ? headContactController
                 : wifeContactController,
             title == "House-holder" ? validateHeadContact : false,
-            false,
-            TextInputType.phone,
           ),
+
           _buildTextField(
             '$title Birthplace',
             title == "House-holder"
@@ -639,36 +652,37 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
           cursorColor: Colors.black,
           controller: controller,
           decoration: InputDecoration(
-              labelText: label,
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-              labelStyle: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: Color.fromRGBO(0, 0, 0, 1)),
-              enabledBorder: OutlineInputBorder(
-                borderSide:
-                    const BorderSide(color: Color.fromARGB(255, 168, 162, 162)),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide:
-                    const BorderSide(color: Color.fromARGB(255, 168, 162, 162)),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              errorText: validate ? 'Required' : null,
-              errorStyle:
-                  const TextStyle(fontSize: 10, fontWeight: FontWeight.w400),
-              errorBorder: OutlineInputBorder(
-                borderSide:
-                    const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderSide:
-                    const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-                borderRadius: BorderRadius.circular(10),
-              ),),
+            labelText: label,
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            labelStyle: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: Color.fromRGBO(0, 0, 0, 1)),
+            enabledBorder: OutlineInputBorder(
+              borderSide:
+                  const BorderSide(color: Color.fromARGB(255, 168, 162, 162)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide:
+                  const BorderSide(color: Color.fromARGB(255, 168, 162, 162)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            errorText: validate ? 'Required' : null,
+            errorStyle:
+                const TextStyle(fontSize: 10, fontWeight: FontWeight.w400),
+            errorBorder: OutlineInputBorder(
+              borderSide:
+                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderSide:
+                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
         ),
         const SizedBox(
           height: 10,
@@ -677,9 +691,77 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
     );
   }
 
+  _buildPhoneNumTextField(
+    String label,
+    TextEditingController controller,
+    bool validate,
+  ) {
+    return Column(
+      children: [
+        TextFormField(
+          keyboardType: TextInputType.phone,
+          cursorColor: Colors.black,
+          controller: controller,
+          decoration: InputDecoration(
+            labelText: label,
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            labelStyle: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: Color.fromRGBO(0, 0, 0, 1)),
+            enabledBorder: OutlineInputBorder(
+              borderSide:
+                  const BorderSide(color: Color.fromARGB(255, 168, 162, 162)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide:
+                  const BorderSide(color: Color.fromARGB(255, 168, 162, 162)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            errorText: validate ? 'Required' : null,
+            errorStyle:
+                const TextStyle(fontSize: 10, fontWeight: FontWeight.w400),
+            errorBorder: OutlineInputBorder(
+              borderSide:
+                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderSide:
+                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Required';
+            } else {
+              String? validationResult = _validatePhoneNumber(value);
+              return validationResult;
+            }
+          },
+        ),
+        const SizedBox(
+          height: 10,
+        )
+      ],
+    );
+  }
+
+  String? _validatePhoneNumber(String value) {
+    // Validate phone number
+    if (value.length != 10) {
+      return 'Phone number must be 10 digits';
+    }
+    return null; // Return null if phone number is valid
+  }
+
   Future<void> saveUser() async {
     var sharedPref = await SharedPreferences.getInstance();
     var showNum = sharedPref.getString(MyAppState.PHONENUM);
+    String? validationResult = _validatePhoneNumber(headContactController.text);
     try {
       String hName = headNameController.text.trim();
       String hGotra = headGotraController.text.trim();
@@ -706,75 +788,89 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
       String wContact = "+91$wContactString";
 
       if (hName.isNotEmpty && hGotra.isNotEmpty && headProfilePic != null) {
-        final headDownloadUrl =
-            await uploadFile(headProfilePic!, "headProfilePictures");
-        String? wifeDownloadUrl;
+        if (validationResult == null) {
+          final headDownloadUrl =
+              await uploadFile(headProfilePic!, "headProfilePictures");
+          String? wifeDownloadUrl;
 
-        if (wifeProfilePic != null) {
-          wifeDownloadUrl =
-              await uploadFile(wifeProfilePic!, "wifeProfilePictures");
-        }
+          if (wifeProfilePic != null) {
+            wifeDownloadUrl =
+                await uploadFile(wifeProfilePic!, "wifeProfilePictures");
+          }
 
-        Map<String, dynamic> userData = {
-          "hProfilePic": headDownloadUrl,
-          "hName": hName.capitalizeFirst,
-          "hGotra": hGotra.capitalizeFirst,
-          "hOccupation": hOccupation.capitalizeFirst,
-          "hContact": hContact,
-          "hBirthPlace": hBirthplace.capitalizeFirst,
-          "hPinCode": hPinCode,
-          "hState": hState.capitalizeFirst,
-          "hDistrict": hDistrict.capitalizeFirst,
-          "hCity": hCity.capitalizeFirst,
-          "hCurrentAddress": hCurrentAddress.capitalizeFirst,
-          if (wifeDownloadUrl != null) ...{
-            "wProfilePic": wifeDownloadUrl,
-            "wName": wName.capitalizeFirst,
-            "wGotra": wGotra.capitalizeFirst,
-            "wOccupation": wOccupation.capitalizeFirst,
-            "wContact": wContact,
-            "wBirthPlace": wBirthplace.capitalizeFirst,
-            "wPinCode": wPinCode,
-            "wState": wState.capitalizeFirst,
-            "wDistrict": wDistrict.capitalizeFirst,
-            "wCity": wCity.capitalizeFirst,
-            "wCurrentAddress": wCurrentAddress.capitalizeFirst,
-          } else ...{
-            "wProfilePic": null,
-            "wName": null,
-            "wGotra": null,
-            "wOccupation": null,
-            "wContact": null,
-            "wBirthPlace": null,
-            "wPinCode": null,
-            "wState": null,
-            "wDistrict": null,
-            "wCity": null,
-            "wCurrentAddress": null,
-          },
-          "addedBy": showNum,
-        };
+          Map<String, dynamic> userData = {
+            "hProfilePic": headDownloadUrl,
+            "hName": hName.capitalizeFirst,
+            "hGotra": hGotra.capitalizeFirst,
+            "hOccupation": hOccupation.capitalizeFirst,
+            "hContact": hContact,
+            "hBirthPlace": hBirthplace.capitalizeFirst,
+            "hPinCode": hPinCode,
+            "hState": hState.capitalizeFirst,
+            "hDistrict": hDistrict.capitalizeFirst,
+            "hCity": hCity.capitalizeFirst,
+            "hCurrentAddress": hCurrentAddress.capitalizeFirst,
+            if (wifeDownloadUrl != null) ...{
+              "wProfilePic": wifeDownloadUrl,
+              "wName": wName.capitalizeFirst,
+              "wGotra": wGotra.capitalizeFirst,
+              "wOccupation": wOccupation.capitalizeFirst,
+              "wContact": wContact,
+              "wBirthPlace": wBirthplace.capitalizeFirst,
+              "wPinCode": wPinCode,
+              "wState": wState.capitalizeFirst,
+              "wDistrict": wDistrict.capitalizeFirst,
+              "wCity": wCity.capitalizeFirst,
+              "wCurrentAddress": wCurrentAddress.capitalizeFirst,
+            } else ...{
+              "wProfilePic": null,
+              "wName": null,
+              "wGotra": null,
+              "wOccupation": null,
+              "wContact": null,
+              "wBirthPlace": null,
+              "wPinCode": null,
+              "wState": null,
+              "wDistrict": null,
+              "wCity": null,
+              "wCurrentAddress": null,
+            },
+            "addedBy": showNum,
+          };
 
-        await FirebaseFirestore.instance
-            .collection("directory-users")
-            .add(userData);
+          await FirebaseFirestore.instance
+              .collection("directory-users")
+              .add(userData);
 
-        print("User Created!");
-        print("ADDED BY : ${showNum}");
-        submitForm();
-         setState(() {
+          print("User Created!");
+          print("ADDED BY : ${showNum}");
+          submitForm();
+          setState(() {
             scrollController.animateTo(
               scrollController.position.minScrollExtent,
               curve: Curves.easeOut,
               duration: const Duration(milliseconds: 500),
             );
           });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('User Saved Successfully!'),
-          ),
-        );
-        Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('User Saved Successfully!'),
+            ),
+          );
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(validationResult)),
+          );
+          Navigator.pop(context);
+          setState(() {
+            scrollController.animateTo(
+              scrollController.position.minScrollExtent,
+              curve: Curves.easeOut,
+              duration: const Duration(milliseconds: 500),
+            );
+          });
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -782,6 +878,13 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
           ),
         );
         Navigator.pop(context);
+        setState(() {
+            scrollController.animateTo(
+              scrollController.position.minScrollExtent,
+              curve: Curves.easeOut,
+              duration: const Duration(milliseconds: 500),
+            );
+          });
       }
     } catch (error) {
       print("Error saving user: $error");

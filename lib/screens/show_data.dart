@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_directory_app/screens/add_profile.dart';
 import 'package:flutter_directory_app/screens/home_page.dart';
 import 'package:flutter_directory_app/main.dart';
 import 'package:flutter_directory_app/providers/phone_number_notifier.dart';
@@ -85,10 +86,8 @@ class _ShowDataState extends ConsumerState<ShowData> {
             clientSnapShot['hCurrentAddress'].toString().toLowerCase();
         var wCurrentAddress =
             clientSnapShot['wCurrentAddress'].toString().toLowerCase();
-        var hCity =
-            clientSnapShot['hCity'].toString().toLowerCase();
-        var wCity =
-            clientSnapShot['wCity'].toString().toLowerCase();
+        var hCity = clientSnapShot['hCity'].toString().toLowerCase();
+        var wCity = clientSnapShot['wCity'].toString().toLowerCase();
         var hGotra = clientSnapShot['hGotra'].toString().toLowerCase();
         var wGotra = clientSnapShot['wGotra'].toString().toLowerCase();
         var hContact = clientSnapShot['hContact'].toString();
@@ -140,6 +139,21 @@ class _ShowDataState extends ConsumerState<ShowData> {
     }
   }
 
+  void logout() async {
+    var sharedPref = await SharedPreferences.getInstance();
+    sharedPref.setBool(MyAppState.KEYLOGIN, false);
+    final notifier = ref.read(phoneNoProvider.notifier);
+    notifier.setPhoneNo(phoneNo: '');
+    sharedPref.setString(MyAppState.PHONENUM, '');
+    sharedPref.setBool(MyAppState.ISADMIN, false);
+    await FirebaseAuth.instance.signOut();
+    // ignore: use_build_context_synchronously
+    Navigator.popUntil(context, (route) => route.isFirst);
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => HomePage()));
+  }
+
   @override
   Widget build(BuildContext context) {
     check();
@@ -162,8 +176,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                     decoration: InputDecoration(
                         filled: true,
                         fillColor: const Color.fromRGBO(246, 246, 246, 1),
-                        contentPadding:
-                            const EdgeInsets.symmetric(vertical: 0),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 0),
                         hintText: "Search",
                         hintStyle: const TextStyle(
                           fontSize: 12,
@@ -203,7 +216,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
           future: check(),
           builder: (context, snapshot) {
             print("VALUE OF CHECK NUMBE INSIDE DRAWER $checkNum");
-    
+
             return Drawer(
               child: ListView(
                 children: [
@@ -231,7 +244,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                 "Have you not logged in yet?",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 10,
+                                  fontSize: 12,
                                 ),
                               ),
                               GestureDetector(
@@ -242,7 +255,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                   "Log in now.",
                                   style: TextStyle(
                                     fontWeight: FontWeight.w400,
-                                    fontSize: 10,
+                                    fontSize: 12,
                                   ),
                                 ),
                               )
@@ -269,17 +282,22 @@ class _ShowDataState extends ConsumerState<ShowData> {
                     ),
                     onTap: () async {
                       var sharedPref = await SharedPreferences.getInstance();
-                      var isLoggedIn =
-                          sharedPref.getBool(MyAppState.KEYLOGIN);
+                      var isLoggedIn = sharedPref.getBool(MyAppState.KEYLOGIN);
                       print(
                           " VALUE OF IS LOGGED IN in userdetails: $isLoggedIn");
                       if (isLoggedIn != null) {
                         if (isLoggedIn == true) {
                           // ignore: use_build_context_synchronously
-                          Navigator.push(
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => RegistrationPage())
+                          //         );
+                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => RegistrationPage()));
+                                  builder: (context) => const AddProfile())
+                                  );
                         } else {
                           Navigator.pushNamed(context, '/second');
                         }
@@ -296,7 +314,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                           title: const Text(
                             'Login',
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 15,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -312,25 +330,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          onTap: () async {
-                            var sharedPref =
-                                await SharedPreferences.getInstance();
-                            sharedPref.setBool(MyAppState.KEYLOGIN, false);
-                            final notifier =
-                                ref.read(phoneNoProvider.notifier);
-                            notifier.setPhoneNo(phoneNo: '');
-                            sharedPref.setString(MyAppState.PHONENUM, '');
-                            await FirebaseAuth.instance.signOut();
-                            // ignore: use_build_context_synchronously
-                            Navigator.popUntil(
-                                context, (route) => route.isFirst);
-                            // ignore: use_build_context_synchronously
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HomePage()));
-                          },
-                        ),
+                          onTap: logout),
                   const Divider(
                     thickness: 0.5,
                   ),
@@ -345,7 +345,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
               height: 15,
             ),
             // citySearchBar(),
-    
+
             // Padding(
             //   padding: const EdgeInsets.symmetric(horizontal: 15.0),
             //   child: Align(
@@ -381,7 +381,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
             //     ),
             //   ),
             // ),
-    
+
             const SizedBox(
               height: 15,
             ),
@@ -409,7 +409,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                           itemCount: _allResults.length,
                           itemBuilder: (context, index) {
                             var docId = _allResults[index].id;
-    
+
                             String hPhoneNumber =
                                 _allResults[index]['hContact'];
                             String maskedHPhoneNum =
@@ -421,7 +421,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                               maskedWPhoneNum =
                                   maskLastThreeDigits(wPhoneNumber);
                             }
-    
+
                             return GestureDetector(
                               onTap: () async {
                                 var sharedPref =
@@ -484,8 +484,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                           radius: 25,
                                                           backgroundImage:
                                                               NetworkImage(
-                                                            _allResults[index]
-                                                                    [
+                                                            _allResults[index][
                                                                     "hProfilePic"] ??
                                                                 '',
                                                           ),
@@ -494,8 +493,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                           _allResults[index]
                                                                   ["hName"] +
                                                               " " +
-                                                              _allResults[
-                                                                      index]
+                                                              _allResults[index]
                                                                   ["hGotra"] +
                                                               " ",
                                                           style: const TextStyle(
@@ -539,8 +537,9 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                                         "more",
                                                                         style:
                                                                             TextStyle(
-                                                                          color:
-                                                                              Theme.of(context).colorScheme.primary,
+                                                                          color: Theme.of(context)
+                                                                              .colorScheme
+                                                                              .primary,
                                                                           fontSize:
                                                                               12,
                                                                           fontWeight:
@@ -559,8 +558,8 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                           _allResults[index]
                                                                   ["wName"] !=
                                                               null &&
-                                                          _allResults[index][
-                                                                  "wGotra"] !=
+                                                          _allResults[index]
+                                                                  ["wGotra"] !=
                                                               null &&
                                                           _allResults[index][
                                                                   "wContact"] !=
@@ -599,53 +598,51 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                                         FontWeight
                                                                             .bold),
                                                               ),
-                                                              subtitle:
-                                                                  Column(
+                                                              subtitle: Column(
                                                                 children: [
-                                                                  if (_allResults[index]
+                                                                  if (_allResults[
+                                                                              index]
                                                                           [
                                                                           "wContact"] !=
                                                                       null)
                                                                     Row(
-                                                                     
                                                                       children: [
                                                                         Text(
                                                                           "$maskedWPhoneNum",
                                                                           style:
                                                                               const TextStyle(
-                                                                            fontSize: 11,
+                                                                            fontSize:
+                                                                                11,
                                                                           ),
                                                                         ),
                                                                       ],
                                                                     ),
-                                                                    if (_allResults[index]
+                                                                  if (_allResults[
+                                                                              index]
                                                                           [
                                                                           "wCity"] !=
                                                                       null)
-                                                                      Row(
-                                                                         mainAxisAlignment:
-                                                                          MainAxisAlignment.spaceBetween,
+                                                                    Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.spaceBetween,
                                                                         children: [
-                                                                        Text(
-                                                                           _allResults[index]
-                                                                        [
-                                                                        'wCity'],
-                                                                          style:
-                                                                              const TextStyle(
-                                                                            fontSize: 11,
+                                                                          Text(
+                                                                            _allResults[index]['wCity'],
+                                                                            style:
+                                                                                const TextStyle(
+                                                                              fontSize: 11,
+                                                                            ),
                                                                           ),
-                                                                        ),
-                                                                        Text(
-                                                                          "more",
-                                                                          style:
-                                                                              TextStyle(
-                                                                            color: Theme.of(context).colorScheme.primary,
-                                                                            fontSize: 12,
-                                                                            fontWeight: FontWeight.w400,
+                                                                          Text(
+                                                                            "more",
+                                                                            style:
+                                                                                TextStyle(
+                                                                              color: Theme.of(context).colorScheme.primary,
+                                                                              fontSize: 12,
+                                                                              fontWeight: FontWeight.w400,
+                                                                            ),
                                                                           ),
-                                                                        ),
-                                                                        ]
-                                                                      )
+                                                                        ])
                                                                 ],
                                                               ),
                                                             ),
@@ -675,9 +672,8 @@ class _ShowDataState extends ConsumerState<ShowData> {
                           itemCount: resultList.length,
                           itemBuilder: (context, index) {
                             var docId = resultList[index].id;
-    
-                            String hPhoneNumber =
-                                resultList[index]['hContact'];
+
+                            String hPhoneNumber = resultList[index]['hContact'];
                             String maskedHResultedPhoneNum =
                                 maskLastThreeDigits(hPhoneNumber);
                             String? wPhoneNumber;
@@ -687,7 +683,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                               maskedWResultedPhoneNum =
                                   maskLastThreeDigits(wPhoneNumber!);
                             }
-    
+
                             return GestureDetector(
                               onTap: () async {
                                 var sharedPref =
@@ -719,8 +715,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                 decoration: const BoxDecoration(
                                   boxShadow: [
                                     BoxShadow(
-                                      color:
-                                          Color.fromARGB(255, 236, 236, 236),
+                                      color: Color.fromARGB(255, 236, 236, 236),
                                       blurRadius: 20.0,
                                       spreadRadius: 5.0,
                                     ),
@@ -742,8 +737,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                               children: [
                                                 Padding(
                                                   padding:
-                                                      const EdgeInsets.all(
-                                                          1.0),
+                                                      const EdgeInsets.all(1.0),
                                                   child: Column(
                                                     children: [
                                                       ListTile(
@@ -760,8 +754,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                           resultList[index]
                                                                   ["hName"] +
                                                               " " +
-                                                              resultList[
-                                                                      index]
+                                                              resultList[index]
                                                                   ["hGotra"] +
                                                               " ",
                                                           style: const TextStyle(
@@ -793,8 +786,9 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                                         "more",
                                                                         style:
                                                                             TextStyle(
-                                                                          color:
-                                                                              Theme.of(context).colorScheme.primary,
+                                                                          color: Theme.of(context)
+                                                                              .colorScheme
+                                                                              .primary,
                                                                           fontSize:
                                                                               12,
                                                                           fontWeight:
@@ -822,15 +816,15 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                       if (resultList[index]
                                                                   ["wName"] !=
                                                               null &&
-                                                          resultList[index][
-                                                                  "wGotra"] !=
+                                                          resultList[index]
+                                                                  ["wGotra"] !=
                                                               null &&
                                                           resultList[index][
                                                                   "wProfilePic"] !=
                                                               null &&
                                                           resultList[index][
                                                                   "wContact"] !=
-                                                              null ) ...[
+                                                              null) ...[
                                                         Column(
                                                           children: [
                                                             ListTile(
@@ -861,8 +855,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                                         FontWeight
                                                                             .bold),
                                                               ),
-                                                              subtitle:
-                                                                  Column(
+                                                              subtitle: Column(
                                                                 children: [
                                                                   Row(
                                                                     children: [
@@ -874,11 +867,10 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                                               11,
                                                                         ),
                                                                       ),
-                                                                      
                                                                     ],
                                                                   ),
-                                                                   Row(
-                                                                     mainAxisAlignment:
+                                                                  Row(
+                                                                    mainAxisAlignment:
                                                                         MainAxisAlignment
                                                                             .spaceBetween,
                                                                     children: [
@@ -894,8 +886,9 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                                         "more",
                                                                         style:
                                                                             TextStyle(
-                                                                          color:
-                                                                              Theme.of(context).colorScheme.primary,
+                                                                          color: Theme.of(context)
+                                                                              .colorScheme
+                                                                              .primary,
                                                                           fontSize:
                                                                               12,
                                                                           fontWeight:
@@ -904,7 +897,6 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                                       )
                                                                     ],
                                                                   ),
-                                                                  
                                                                 ],
                                                               ),
                                                             ),

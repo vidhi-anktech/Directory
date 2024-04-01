@@ -1,10 +1,10 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_directory_app/main.dart';
 import 'package:flutter_directory_app/screens/main_screen.dart';
-import 'package:flutter_directory_app/screens/show_data.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -85,54 +85,78 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen>
         var sharedPref = await SharedPreferences.getInstance();
         sharedPref.setBool(MyAppState.KEYLOGIN, true);
         sharedPref.setString(MyAppState.PHONENUM, widget.phoneNo);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const MainScreen()));
-        
+        bool isAdminUser = await isAdmin(widget.phoneNo);
+        if (isAdminUser) {
+          sharedPref.setBool(MyAppState.ISADMIN, true);
+          print("HELLO MR ADMIN");
+          var admin = sharedPref.getBool(MyAppState.ISADMIN);
+          print("are you an admin $admin");
+        } else {
+          sharedPref.setBool(MyAppState.ISADMIN, false);
+          print("HELLO MR USER");
+          var user = sharedPref.getBool(MyAppState.ISADMIN);
+          print("are you an admin $user");
+        }
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const MainScreen()));
       }
     } on FirebaseAuthException catch (ex) {
       print(ex.code.toString());
     }
   }
 
- void resendOTP(String phone) async {
-  try {
-    print("RESEND OTP FUNCTION CALLED");
-    await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: phone,
-      verificationCompleted: (credential) {},
-      verificationFailed: (ex) {
-        print("ERROR : ${ex.code.toString()}");
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        print("CHECKING VERIFICATION ID: $verificationId");
-         print("CHECKING RESEND TOKEN: $resendToken");
-        setState(() {
-          _verificationId = verificationId; 
-          _resendToken = resendToken!;
-        });
-        print("Resending OTP: $verificationId");
-      },
-       timeout: const Duration(seconds: 70),
-       forceResendingToken: _resendToken,
-      codeAutoRetrievalTimeout: (verificationId) {
-        setState(() {
-          _verificationId = verificationId; 
-        });
-        print("Auto Retrieval Timeout: $verificationId");
-      },
-     
-    );
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("OTP Resent Successfully"),
-      ),
-    );
-  //  startTimer();
-  } catch (e) {
-    print(e.toString());
+  void resendOTP(String phone) async {
+    try {
+      print("RESEND OTP FUNCTION CALLED");
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: phone,
+        verificationCompleted: (credential) {},
+        verificationFailed: (ex) {
+          print("ERROR : ${ex.code.toString()}");
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          print("CHECKING VERIFICATION ID: $verificationId");
+          print("CHECKING RESEND TOKEN: $resendToken");
+          setState(() {
+            _verificationId = verificationId;
+            _resendToken = resendToken!;
+          });
+          print("Resending OTP: $verificationId");
+        },
+        timeout: const Duration(seconds: 70),
+        forceResendingToken: _resendToken,
+        codeAutoRetrievalTimeout: (verificationId) {
+          setState(() {
+            _verificationId = verificationId;
+          });
+          print("Auto Retrieval Timeout: $verificationId");
+        },
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("OTP Resent Successfully"),
+        ),
+      );
+      //  startTimer();
+    } catch (e) {
+      print(e.toString());
+    }
   }
-}
 
+  Future<bool> isAdmin(String phoneNumber) async {
+    try {
+      var adminSnapshot = await FirebaseFirestore.instance
+          .collection('admins')
+          .where('phoneNumber', isEqualTo: widget.phoneNo)
+          .get();
+
+      // If there is a match, the user is an admin
+      return adminSnapshot.docs.isNotEmpty;
+    } catch (e) {
+      print('Error checking admin status: $e');
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +167,8 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen>
     }
 
     // check();
-      print("VALUE OF constructor PHONE NUMBER AT Verify otp IS ${widget.phoneNo}");
+    print(
+        "VALUE OF constructor PHONE NUMBER AT Verify otp IS ${widget.phoneNo}");
     return Scaffold(
       backgroundColor: const Color.fromRGBO(255, 255, 255, 1),
       body: ModalProgressHUD(
@@ -209,7 +234,7 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen>
                     codeValue = code.toString();
                   });
                   // verifyOTP();
-                  if(otpController.text.length == 6){
+                  if (otpController.text.length == 6) {
                     verifyOTP();
                   }
                 },
@@ -228,7 +253,8 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen>
                       canResend
                           ? InkWell(
                               onTap: () async {
-                                print("RESENDING OTP ON PHONE NUMBER : ${widget.phoneNo}");
+                                print(
+                                    "RESENDING OTP ON PHONE NUMBER : ${widget.phoneNo}");
                                 resendOTP(widget.phoneNo);
                               },
                               child: Text("Resend",
@@ -279,7 +305,6 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen>
                   ),
                 ],
               ),
-             
               const SizedBox(height: 20),
             ],
           ),
@@ -288,6 +313,3 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen>
     );
   }
 }
-
-
-
