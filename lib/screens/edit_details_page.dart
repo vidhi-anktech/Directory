@@ -66,6 +66,7 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
   bool validate = false;
   bool validateWifeName = false;
   bool validateWifeGotra = false;
+  bool validateWifeCity = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? validationResult;
   String? validationWifeResult;
@@ -430,9 +431,8 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                       false,
                       TextInputType.text),
                   _buildWifeEmptyTextField('Spouse City', spouseCityController,
-                      'wCity', false, TextInputType.text),
-                  // _buildContactTextField(
-                  //     'Spouse Contact', 'wContact', spouseContactController, ""),
+                      'wCity', validateWifeCity, TextInputType.text),
+                 
                   _buildEmptyContactTextField(
                       'Spouse Contact', 'wContact', spouseContactController),
                   _buildWifeEmptyTextField(
@@ -941,6 +941,7 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
               setState(() {
                 validateWifeName == true;
                 validateWifeGotra == true;
+                validateWifeCity == true;
               });
             }
           }
@@ -1072,7 +1073,8 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
   validateForm() {
     validateWifeName = spouseNameController.text.isEmpty;
     validateWifeGotra = spouseGotraController.text.isEmpty;
+    validateWifeCity = spouseCityController.text.isEmpty;
 
-    return !validateWifeName && !validateWifeGotra;
+    return !validateWifeName && !validateWifeGotra && !validateWifeCity;
   }
 }

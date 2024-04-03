@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_directory_app/main.dart';
 import 'package:flutter_directory_app/screens/main_screen.dart';
 import 'package:get/utils.dart';
@@ -38,6 +37,10 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
   bool validateCity = false;
   bool validateHProfile = false;
   bool validateWProfile = false;
+  bool validateWifeName = false;
+  bool validateWifeGotra = false;
+  bool validateWifeContact = false;
+  bool validateWifeCity = false;
 
   final TextEditingController headNameController = TextEditingController();
 
@@ -402,9 +405,32 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         setState(() {
           validate = true; // Set validation to true when button is pressed
         });
-        _onLoading();
+
         if (_validateForm()) {
-          saveUser();
+          if (wifeProfilePic != null) {
+            if (_validateWifeForm()) {
+             
+              saveUser();
+            } else {
+              setState(() {
+                scrollController.animateTo(
+                  scrollController.position.minScrollExtent,
+                  curve: Curves.easeOut,
+                  duration: const Duration(milliseconds: 500),
+                );
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Please fill in all required fields.'),
+                ),
+              );
+            }
+          }
+          // _onLoading();
+          else {
+            
+            saveUser();
+          }
         } else {
           setState(() {
             scrollController.animateTo(
@@ -418,7 +444,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
               content: Text('Please fill in all required fields.'),
             ),
           );
-          Navigator.pop(context);
+         
           _hideLoading();
         }
       },
@@ -465,14 +491,13 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => MainScreen()));
-                      //  Navigator.pop(context);
-                      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const ShowData()));
+                     
                     },
                   ),
                 ],
               );
             });
-        // Navigator.pop(context);
+        
       },
       style: ElevatedButton.styleFrom(
           side: BorderSide(
@@ -502,14 +527,14 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
           _buildTextField(
             '$title Name',
             title == "House-holder" ? headNameController : wifeNameController,
-            title == "House-holder" ? validateHeadName : false,
+            title == "House-holder" ? validateHeadName : validateWifeName,
             false,
             TextInputType.text,
           ),
           _buildTextField(
             '$title Gotra',
             title == "House-holder" ? headGotraController : wifeGotraController,
-            title == "House-holder" ? validateHeadGotra : false,
+            title == "House-holder" ? validateHeadGotra : validateWifeGotra,
             false,
             TextInputType.text,
           ),
@@ -537,7 +562,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
             title == "House-holder"
                 ? headContactController
                 : wifeContactController,
-            title == "House-holder" ? validateHeadContact : false,
+            title == "House-holder" ? validateHeadContact : validateWifeContact,
           ),
 
           _buildTextField(
@@ -559,7 +584,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
           _buildTextField(
             '$title City',
             title == 'House-holder' ? headCityController : wifeCityController,
-            title == "House-holder" ? validateCity : false,
+            title == "House-holder" ? validateCity : validateWifeCity,
             false,
             TextInputType.text,
           ),
@@ -759,9 +784,13 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
   }
 
   Future<void> saveUser() async {
+    Map<String, dynamic> userData;
     var sharedPref = await SharedPreferences.getInstance();
     var showNum = sharedPref.getString(MyAppState.PHONENUM);
     String? validationResult = _validatePhoneNumber(headContactController.text);
+    String? validationWifeResult =
+        _validatePhoneNumber(wifeContactController.text);
+    print("VALIDATION WIFE RESULT $validationWifeResult");
     try {
       String hName = headNameController.text.trim();
       String hGotra = headGotraController.text.trim();
@@ -789,6 +818,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
 
       if (hName.isNotEmpty && hGotra.isNotEmpty && headProfilePic != null) {
         if (validationResult == null) {
+          // _onLoading();
           final headDownloadUrl =
               await uploadFile(headProfilePic!, "headProfilePictures");
           String? wifeDownloadUrl;
@@ -796,33 +826,88 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
           if (wifeProfilePic != null) {
             wifeDownloadUrl =
                 await uploadFile(wifeProfilePic!, "wifeProfilePictures");
-          }
+            if (wName.isNotEmpty &&
+                wGotra.isNotEmpty &&
+                wContact.isNotEmpty &&
+                wCity.isNotEmpty) {
+              if (validationWifeResult == null) {
+                userData = {
+                  "hProfilePic": headDownloadUrl,
+                  "hName": hName.capitalizeFirst,
+                  "hGotra": hGotra.capitalizeFirst,
+                  "hOccupation": hOccupation.capitalizeFirst,
+                  "hContact": hContact,
+                  "hBirthPlace": hBirthplace.capitalizeFirst,
+                  "hPinCode": hPinCode,
+                  "hState": hState.capitalizeFirst,
+                  "hDistrict": hDistrict.capitalizeFirst,
+                  "hCity": hCity.capitalizeFirst,
+                  "hCurrentAddress": hCurrentAddress.capitalizeFirst,
+                  "addedBy": showNum,
+                  "wProfilePic": wifeDownloadUrl,
+                  "wName": wName.capitalizeFirst,
+                  "wGotra": wGotra.capitalizeFirst,
+                  "wOccupation": wOccupation.capitalizeFirst,
+                  "wContact": wContact,
+                  "wBirthPlace": wBirthplace.capitalizeFirst,
+                  "wPinCode": wPinCode,
+                  "wState": wState.capitalizeFirst,
+                  "wDistrict": wDistrict.capitalizeFirst,
+                  "wCity": wCity.capitalizeFirst,
+                  "wCurrentAddress": wCurrentAddress.capitalizeFirst,
+                };
+                _onLoading();
+                await FirebaseFirestore.instance
+                    .collection("directory-users")
+                    .add(userData);
 
-          Map<String, dynamic> userData = {
-            "hProfilePic": headDownloadUrl,
-            "hName": hName.capitalizeFirst,
-            "hGotra": hGotra.capitalizeFirst,
-            "hOccupation": hOccupation.capitalizeFirst,
-            "hContact": hContact,
-            "hBirthPlace": hBirthplace.capitalizeFirst,
-            "hPinCode": hPinCode,
-            "hState": hState.capitalizeFirst,
-            "hDistrict": hDistrict.capitalizeFirst,
-            "hCity": hCity.capitalizeFirst,
-            "hCurrentAddress": hCurrentAddress.capitalizeFirst,
-            if (wifeDownloadUrl != null) ...{
-              "wProfilePic": wifeDownloadUrl,
-              "wName": wName.capitalizeFirst,
-              "wGotra": wGotra.capitalizeFirst,
-              "wOccupation": wOccupation.capitalizeFirst,
-              "wContact": wContact,
-              "wBirthPlace": wBirthplace.capitalizeFirst,
-              "wPinCode": wPinCode,
-              "wState": wState.capitalizeFirst,
-              "wDistrict": wDistrict.capitalizeFirst,
-              "wCity": wCity.capitalizeFirst,
-              "wCurrentAddress": wCurrentAddress.capitalizeFirst,
-            } else ...{
+                print("User Created!");
+                _hideLoading();
+                print("ADDED BY : ${showNum}");
+                submitForm();
+                setState(() {
+                  scrollController.animateTo(
+                    scrollController.position.minScrollExtent,
+                    curve: Curves.easeOut,
+                    duration: const Duration(milliseconds: 500),
+                  );
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('User Saved Successfully!'),
+                  ),
+                );
+                _hideLoading();
+                // Navigator.pop(context);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(validationWifeResult)),
+                );
+                 _hideLoading();
+              }
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content:
+                      Text('Please fill in all required fields for spouse.'),
+                ),
+              );
+               _hideLoading();
+            }
+          } else {
+            userData = {
+              "hProfilePic": headDownloadUrl,
+              "hName": hName.capitalizeFirst,
+              "hGotra": hGotra.capitalizeFirst,
+              "hOccupation": hOccupation.capitalizeFirst,
+              "hContact": hContact,
+              "hBirthPlace": hBirthplace.capitalizeFirst,
+              "hPinCode": hPinCode,
+              "hState": hState.capitalizeFirst,
+              "hDistrict": hDistrict.capitalizeFirst,
+              "hCity": hCity.capitalizeFirst,
+              "hCurrentAddress": hCurrentAddress.capitalizeFirst,
+              "addedBy": showNum,
               "wProfilePic": null,
               "wName": null,
               "wGotra": null,
@@ -834,35 +919,39 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
               "wDistrict": null,
               "wCity": null,
               "wCurrentAddress": null,
-            },
-            "addedBy": showNum,
-          };
+            };
+            _onLoading();
+            await FirebaseFirestore.instance
+                .collection("directory-users")
+                .add(userData);
 
-          await FirebaseFirestore.instance
-              .collection("directory-users")
-              .add(userData);
-
-          print("User Created!");
-          print("ADDED BY : ${showNum}");
-          submitForm();
-          setState(() {
-            scrollController.animateTo(
-              scrollController.position.minScrollExtent,
-              curve: Curves.easeOut,
-              duration: const Duration(milliseconds: 500),
+            print("User Created!");
+            print("ADDED BY : ${showNum}");
+            submitForm();
+            setState(() {
+              scrollController.animateTo(
+                scrollController.position.minScrollExtent,
+                curve: Curves.easeOut,
+                duration: const Duration(milliseconds: 500),
+              );
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('User Saved Successfully!'),
+              ),
             );
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('User Saved Successfully!'),
-            ),
-          );
-          Navigator.pop(context);
+            // Navigator.pop(context);
+            Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MainScreen()));
+          }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(validationResult)),
           );
-          Navigator.pop(context);
+           _hideLoading();
+          // Navigator.pop(context);
           setState(() {
             scrollController.animateTo(
               scrollController.position.minScrollExtent,
@@ -877,14 +966,15 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
             content: Text('Please choose an image'),
           ),
         );
-        Navigator.pop(context);
+         _hideLoading();
+        // Navigator.pop(context);
         setState(() {
-            scrollController.animateTo(
-              scrollController.position.minScrollExtent,
-              curve: Curves.easeOut,
-              duration: const Duration(milliseconds: 500),
-            );
-          });
+          scrollController.animateTo(
+            scrollController.position.minScrollExtent,
+            curve: Curves.easeOut,
+            duration: const Duration(milliseconds: 500),
+          );
+        });
       }
     } catch (error) {
       print("Error saving user: $error");
@@ -895,7 +985,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         ),
       );
     } finally {
-      _hideLoading(); // Hide loading indicator whether there's an error or not
+      // _hideLoading(); // Hide loading indicator whether there's an error or not
       setState(() {
         _loading = false;
         headProfilePic = null;
@@ -1000,7 +1090,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
   }
 
   void _hideLoading() {
-    // Navigator.pop(context); // Close the loading dialog
+    Navigator.pop(context); // Close the loading dialog
 
     setState(() {
       _loading = false;
@@ -1011,7 +1101,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
     validateHeadName = headNameController.text.isEmpty;
     validateHeadGotra = headGotraController.text.isEmpty;
     validateHeadContact = headContactController.text.isEmpty;
-    // validatePin = headCityPinController.text.isEmpty;
     validateCity = headCityController.text.isEmpty;
     headProfilePic == null;
 
@@ -1019,6 +1108,20 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         !validateHeadGotra &&
         !validateHeadContact &&
         !validateCity;
+    // && !validatePin;
+  }
+
+  _validateWifeForm() {
+    validateWifeName = wifeNameController.text.isEmpty;
+    validateWifeGotra = wifeGotraController.text.isEmpty;
+    validateWifeContact = wifeContactController.text.isEmpty;
+    validateWifeCity = wifeCityController.text.isEmpty;
+    wifeProfilePic == null;
+
+    return !validateWifeName &&
+        !validateWifeGotra &&
+        !validateWifeContact &&
+        !validateWifeCity;
     // && !validatePin;
   }
 
