@@ -61,8 +61,8 @@ class _SponsorsState extends State<Sponsors> {
                     itemCount: results.length,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      childAspectRatio: 8.0 / 10.0,
-                      crossAxisCount: 1,
+                      childAspectRatio: 8.0 / 12.0,
+                      crossAxisCount: 2,
                     ),
                     itemBuilder: (context, index) {
                       Future<Widget> editIcon() async {

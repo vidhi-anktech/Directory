@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_directory_app/screens/main_screen.dart';
-
 import 'package:get/utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -68,6 +67,10 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
   bool validateWifeName = false;
   bool validateWifeGotra = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String? validationResult;
+  String? validationWifeResult;
+  String? validationEmptyWifeResult;
+  ScrollController scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +84,7 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
           size: 40,
         ),
         child: SingleChildScrollView(
+          controller: scrollController,
           child: Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
@@ -223,8 +227,12 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                 userData["hCurrentAddress"], TextInputType.text),
             // _buildTextField("$person Contact Number", "hContact",
             //     userData["hContact"], TextInputType.phone),
-            _buildPhoneTextField("$person Contact Number", "hContact",
-                userData["hContact"], TextInputType.phone),
+            _buildPhoneTextField(
+                "$person Contact Number",
+                "hContact",
+                userData["hContact"],
+                TextInputType.phone,
+                hContactEditController),
             _buildTextField("$person Birth Place", "hBirthPlace",
                 userData["hBirthPlace"], TextInputType.text),
           ],
@@ -316,7 +324,7 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                   _buildTextField("$person Current Address", "wCurrentAddress",
                       userData["wCurrentAddress"], TextInputType.text),
                   _buildContactTextField("$person Contact Number", "wContact",
-                      wContactEditController),
+                      wContactEditController, userData['wContact']),
                   _buildTextField("$person Birth Place", "wBirthPlace",
                       userData["wBirthPlace"], TextInputType.text),
                 ],
@@ -340,6 +348,7 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                     onTap: () async {
                       final wSelectedImage = await ImagePicker()
                           .pickImage(source: ImageSource.gallery);
+
                       if (wSelectedImage != null) {
                         File wConvertedFile = File(wSelectedImage.path);
                         setState(() {
@@ -359,7 +368,7 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                             radius: 60,
                             backgroundImage: FileImage(wifeProfilePic!)),
                   ),
-                  if (headEditedProfilePic != null) ...[
+                  if (wifeProfilePic != null) ...[
                     TextButton(
                       onPressed: () {
                         _wCropImage();
@@ -422,7 +431,9 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                       TextInputType.text),
                   _buildWifeEmptyTextField('Spouse City', spouseCityController,
                       'wCity', false, TextInputType.text),
-                  _buildContactTextField(
+                  // _buildContactTextField(
+                  //     'Spouse Contact', 'wContact', spouseContactController, ""),
+                  _buildEmptyContactTextField(
                       'Spouse Contact', 'wContact', spouseContactController),
                   _buildWifeEmptyTextField(
                       'Spouse Birthplace',
@@ -445,15 +456,18 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
     }
   }
 
-  Widget _buildContactTextField(
-      String label, String field, TextEditingController controller) {
+  Widget _buildContactTextField(String label, String field,
+      TextEditingController controller, String initialValue) {
+    String last10Digits = initialValue.length >= 10
+        ? initialValue.substring(initialValue.length - 10)
+        : initialValue;
     return Column(
       children: [
         TextFormField(
           textCapitalization: TextCapitalization.words,
           keyboardType: TextInputType.phone,
-          controller: controller,
-          // initialValue: initialValue ?? '',
+          // controller: controller,
+          initialValue: last10Digits,
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w400,
@@ -495,31 +509,16 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
             ),
           ),
           validator: (value) {
-            if (value != null || value!.isNotEmpty) {
-              if (value.length != 10) {
-                return 'Mobile Number must be of 10 digit';
-              } else {
-                return null;
-              }
+            if (value == null || value.isEmpty) {
+              return 'required';
             } else {
-              return null;
+              String? validationWifeResult = _validateWifePhoneNumber(value);
+              return validationWifeResult;
             }
           },
           onChanged: (value) {
-            String hEditedContact = hContactEditController.text.trim();
-            String wEditedContact = wContactEditController.text.trim();
-            String spouseContact = spouseContactController.text.trim();
-            hEditedContact = "+91$hEditedContact";
-            wEditedContact = "+91$wEditedContact";
-            spouseContact = "+91$spouseContact";
-
-            if (controller == hContactEditController) {
-              editedData[field] = hEditedContact;
-            } else if (controller == wContactEditController) {
-              editedData[field] = wEditedContact;
-            } else if (controller == spouseContactController) {
-              editedData[field] = spouseContact;
-            }
+            validationWifeResult = _validateWifePhoneNumber(value);
+            print("VALIDATIONWIFERESULT $validationWifeResult");
           },
         ),
         const SizedBox(
@@ -529,17 +528,76 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
     );
   }
 
-//   _validateInputs() {
-//     if (_formKey.currentState!.validate()) {
-// //    If all data are correct then save data to out variables
-//       _formKey.currentState?.save();
-//     } else {
-// //    If all data are not valid then start auto validation.
-//       setState(() {
-//         _autoValidate = true;
-//       });
-//     }
-//   }
+  Widget _buildEmptyContactTextField(
+      String label, String field, TextEditingController controller) {
+    return Column(
+      children: [
+        TextFormField(
+          textCapitalization: TextCapitalization.words,
+          keyboardType: TextInputType.phone,
+          controller: spouseContactController,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            color: Color.fromRGBO(0, 0, 0, 1),
+          ),
+          decoration: InputDecoration(
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            labelText: label,
+            labelStyle: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: Color.fromRGBO(0, 0, 0, 1)),
+            enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(
+                color: Color.fromARGB(255, 168, 162, 162),
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: const BorderSide(
+                color: Color.fromARGB(255, 168, 162, 162),
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            errorStyle: const TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
+            errorBorder: OutlineInputBorder(
+              borderSide:
+                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderSide:
+                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Required';
+            } else {
+              String? validationEmptyWifeResult =
+                  _validateEmptyWifePhoneNumber(value);
+              return validationEmptyWifeResult;
+            }
+          },
+          onChanged: (value) {
+            validationEmptyWifeResult = _validateEmptyWifePhoneNumber(value);
+
+            print(
+                "VALIDATIONWIFERESULT HUAHHHHHAHAHHAH $validationEmptyWifeResult");
+          },
+        ),
+        const SizedBox(
+          height: 10,
+        )
+      ],
+    );
+  }
 
   _buildWifeEmptyTextField(
     String label,
@@ -548,6 +606,7 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
     bool validate,
     TextInputType keyboardType,
   ) {
+    print("VALUE OF BOOOOOLL VAIDATE $validate");
     return Column(
       children: [
         TextField(
@@ -662,18 +721,17 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
     );
   }
 
-  Widget _buildPhoneTextField(
-    String label,
-    String field,
-    String? initialValue,
-    TextInputType keyboardType,
-  ) {
+  Widget _buildPhoneTextField(String label, String field, String? initialValue,
+      TextInputType keyboardType, TextEditingController controller) {
+    String last10Digits = initialValue != null && initialValue.length >= 10
+        ? initialValue.substring(initialValue.length - 10)
+        : initialValue ?? '';
     return Column(
       children: [
         TextFormField(
-          textCapitalization: TextCapitalization.words,
           keyboardType: keyboardType,
-          initialValue: initialValue ?? '',
+          // initialValue: initialValue ?? '',
+          initialValue: last10Digits,
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w400,
@@ -713,14 +771,15 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
             ),
           ),
           validator: (value) {
-            if (value?.length != 13) {
-              return 'Mobile Number must be of 10 digit';
+            if (value == null || value.isEmpty) {
+              return 'Required';
             } else {
-              return null;
+              String? validationResult = _validatePhoneNumber(value);
+              return validationResult;
             }
           },
           onChanged: (value) {
-            editedData[field] = value.capitalizeFirst ?? "";
+            validationResult = _validatePhoneNumber(value);
           },
         ),
         const SizedBox(
@@ -728,6 +787,36 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
         )
       ],
     );
+  }
+
+  String? _validatePhoneNumber(String value) {
+    // Validate phone number
+    if (value.length != 10) {
+      return 'Phone number must be 10 digits';
+    } else {
+      editedData['hContact'] = "+91$value";
+      return null; // Return null if phone number is valid
+    }
+  }
+
+  String? _validateWifePhoneNumber(String value) {
+    // Validate phone number
+    if (value.length != 10) {
+      return 'Phone number must be 10 digits';
+    } else {
+      editedData['wContact'] = "+91$value";
+      return null; // Return null if phone number is valid
+    }
+  }
+
+  String? _validateEmptyWifePhoneNumber(String value) {
+    // Validate phone number
+    if (value.length != 10) {
+      return 'Phone number must be 10 digits';
+    } else {
+      editedData['wContact'] = "+91$value";
+      return ""; // Return null if phone number is valid
+    }
   }
 
   Future<String> uploadFile(File file, String folder) async {
@@ -770,24 +859,92 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
   }
 
   Widget _buildUpdateNowButton() {
+    print("Result Validation $validationResult");
+    print("Result Wife validation $validationWifeResult");
+    print("Result HUUUHAHAHAHA $validationEmptyWifeResult");
+
     return ElevatedButton(
       onPressed: () async {
-        setState(() {
-          _loading = true;
-        });
-        await _uploadAndSaveImage();
-        await FirebaseFirestore.instance
-            .collection("directory-users")
-            .doc(widget.userId)
-            .update(editedData)
-            .then((value) => {
-                  print("HURRAAAYYY! DATA UPDATED SUCCESSFULLY"),
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const MainScreen())),
-                  // Navigator.pop(context),
+        if (spouseNameController.text.isEmpty &&
+            spouseGotraController.text.isEmpty &&
+            spouseOccupationController.text.isEmpty &&
+            spousePinCodeController.text.isEmpty &&
+            spouseStateController.text.isEmpty &&
+            spouseDistrictController.text.isEmpty &&
+            spouseCityController.text.isEmpty &&
+            spouseContactController.text.isEmpty &&
+            spouseBirthPlaceController.text.isEmpty &&
+            spouseCurrentAddressController.text.isEmpty) {
+          if (wifeProfilePic == null) {
+            print("Result Validation aaa $validationResult");
+            if (validationResult == null) {
+              setState(() {
+                _loading = true;
+              });
+              await _uploadAndSaveImage();
+              await FirebaseFirestore.instance
+                  .collection("directory-users")
+                  .doc(widget.userId)
+                  .update(editedData)
+                  .then((value) => {
+                        print("HURRAAAYYY! DATA UPDATED SUCCESSFULLY"),
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MainScreen())),
+                        // Navigator.pop(context),
+                      });
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text("Please enter valid phone number")),
+              );
+            }
+          }
+        } else {
+          if (wifeProfilePic == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                  content:
+                      Text("Please select an image for spouse to continue")),
+            );
+          } else {
+            if (validateForm()) {
+              if (validationEmptyWifeResult != null &&
+                  validationEmptyWifeResult == '') {
+                setState(() {
+                  _loading = true;
                 });
+                await _uploadAndSaveImage();
+                await FirebaseFirestore.instance
+                    .collection("directory-users")
+                    .doc(widget.userId)
+                    .update(editedData)
+                    .then((value) => {
+                          print("HURRAAAYYY! DATA UPDATED SUCCESSFULLY"),
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const MainScreen())),
+                          // Navigator.pop(context),
+                        });
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text("Please Enter Valid Phone Number")),
+                );
+              }
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Please fill all required field")),
+              );
+              setState(() {
+                validateWifeName == true;
+                validateWifeGotra == true;
+              });
+            }
+          }
+        }
       },
       style: ElevatedButton.styleFrom(
         shape: const RoundedRectangleBorder(

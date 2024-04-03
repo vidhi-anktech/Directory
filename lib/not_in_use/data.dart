@@ -125,5 +125,101 @@ class _SponsorsState extends State<Sponsors> {
                 },
               ));
   }
+
+   // Widget _buildUpdateNowButton() {
+  //   return ElevatedButton(
+  //     onPressed: () async {
+  //       if (validationResult == null && validationWifeResult == null) {
+  //         if (spouseNameController.text.isEmpty &&
+  //             spouseGotraController.text.isEmpty &&
+  //             spouseOccupationController.text.isEmpty &&
+  //             spousePinCodeController.text.isEmpty &&
+  //             spouseStateController.text.isEmpty &&
+  //             spouseDistrictController.text.isEmpty &&
+  //             spouseCityController.text.isEmpty &&
+  //             spouseContactController.text.isEmpty &&
+  //             spouseBirthPlaceController.text.isEmpty &&
+  //             spouseCurrentAddressController.text.isEmpty) {
+  //           if (wifeProfilePic == null) {
+  //             setState(() {
+  //               _loading = true;
+  //             });
+  //             await _uploadAndSaveImage();
+  //             await FirebaseFirestore.instance
+  //                 .collection("directory-users")
+  //                 .doc(widget.userId)
+  //                 .update(editedData)
+  //                 .then((value) => {
+  //                       print("HURRAAAYYY! DATA UPDATED SUCCESSFULLY"),
+  //                       Navigator.pushReplacement(
+  //                           context,
+  //                           MaterialPageRoute(
+  //                               builder: (context) => const MainScreen())),
+  //                       // Navigator.pop(context),
+  //                     });
+  //           } else {
+  //             ScaffoldMessenger.of(context).showSnackBar(
+  //               const SnackBar(
+  //                   content: Text("Please enter valid phone number")),
+  //             );
+  //             // Navigator.pop(context);
+  //             setState(() {
+  //               scrollController.animateTo(
+  //                 scrollController.position.minScrollExtent,
+  //                 curve: Curves.easeOut,
+  //                 duration: const Duration(milliseconds: 500),
+  //               );
+  //             });
+  //           }
+  //         } else {
+  //           if (wifeProfilePic == null) {
+  //             ScaffoldMessenger.of(context).showSnackBar(
+  //               const SnackBar(
+  //                   content:
+  //                       Text("Please select an image for spouse to continue")),
+  //             );
+  //             // Navigator.pop(context);
+  //           } else {
+  //             setState(() {
+  //               _loading = true;
+  //             });
+  //             await _uploadAndSaveImage();
+  //             await FirebaseFirestore.instance
+  //                 .collection("directory-users")
+  //                 .doc(widget.userId)
+  //                 .update(editedData)
+  //                 .then((value) => {
+  //                       print("HURRAAAYYY! DATA UPDATED SUCCESSFULLY"),
+  //                       Navigator.pushReplacement(
+  //                           context,
+  //                           MaterialPageRoute(
+  //                               builder: (context) => const MainScreen())),
+  //                       // Navigator.pop(context),
+  //                     });
+  //           }
+  //         }
+  //       } else {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(content: Text("Please enter valid phone number")),
+  //         );
+  //       }
+  //     },
+  //     style: ElevatedButton.styleFrom(
+  //       shape: const RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.all(Radius.circular(5)),
+  //       ),
+  //       backgroundColor: Theme.of(context).colorScheme.primary,
+  //       foregroundColor: Colors.white,
+  //     ),
+  //     child: const Text(
+  //       "Update",
+  //       style: TextStyle(
+  //         fontSize: 14,
+  //         fontWeight: FontWeight.w600,
+  //       ),
+  //     ),
+  //   );
+  // }
+
 }
 

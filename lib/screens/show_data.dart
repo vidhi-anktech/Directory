@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_directory_app/screens/add_profile.dart';
 import 'package:flutter_directory_app/screens/home_page.dart';
@@ -9,6 +12,7 @@ import 'package:flutter_directory_app/screens/register_details_page.dart';
 import 'package:flutter_directory_app/screens/user-details-page.dart';
 import 'package:get/utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ShowData extends ConsumerStatefulWidget {
@@ -29,7 +33,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
   var searchCityController = TextEditingController();
   var selectedCity;
   bool _toggle = true;
-  // var checkNumber;
+  File? profilePic;
 
   void _doToggle() => setState(() => _toggle = !_toggle);
 
@@ -217,64 +221,253 @@ class _ShowDataState extends ConsumerState<ShowData> {
           builder: (context, snapshot) {
             print("VALUE OF CHECK NUMBE INSIDE DRAWER $checkNum");
 
-            return Drawer(
+            return
+                // Drawer(
+                //   child: ListView(
+                //     children: [
+                //       DrawerHeader(
+                //         decoration: const BoxDecoration(
+                //             color: Color.fromRGBO(217, 217, 217, 1)),
+                //         child: Column(
+                //           mainAxisAlignment: MainAxisAlignment.start,
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //             StreamBuilder(
+                //                 stream: FirebaseFirestore.instance
+                //                     .collection("my-profile")
+                //                     .snapshots(),
+                //                 builder: (context, snapshot) {
+                //                   if (snapshot.connectionState ==  ConnectionState.active) {
+                //                     if (snapshot.hasData && snapshot.data != null) {
+                //                       List data = snapshot.data!.docs;
+                //                       print("PRINTING DATA $data");
+                //                       return Expanded(
+                //                         child: ListView.builder(
+                //                           shrinkWrap: true,
+                //                           //  scrollDirection: Axis.vertical,
+                //                             itemCount: 1,
+                //                             itemBuilder: (context, index) {
+                //                               return ListTile(
+                //                                 leading: Column(
+                //                                   children: [
+                //                                     CircleAvatar(
+                //                                       radius: 30,
+                //                                       backgroundImage: NetworkImage(data[index]['profilePicture']),
+                //                                     ),
+                //                                     Text(data[index]['name'])
+                //                                   ],
+                //                                 ),
+                //                               );
+                //                             }),
+                //                       );
+                //                     }else{
+                //                       return const Text("No Data Found");
+                //                     }
+                //                   }else{
+                //                     return const Center(child: CircularProgressIndicator());
+                //                   }
+                //                 }),
+                //             const SizedBox(height: 0),
+                //             const Text(
+                //               "Jai-Jinendra!",
+                //               style: TextStyle(
+                //                 // color: Colors.white,
+                //                 fontWeight: FontWeight.w600,
+                //                 fontSize: 12,
+                //               ),
+                //             ),
+                //             const SizedBox(height: 5),
+                //             if (checkNum == null || checkNum.isEmpty) ...[
+                //               Column(
+                //                 crossAxisAlignment: CrossAxisAlignment.start,
+                //                 children: [
+                //                   const Text(
+                //                     "Have you not logged in yet?",
+                //                     style: TextStyle(
+                //                       fontWeight: FontWeight.w600,
+                //                       fontSize: 12,
+                //                     ),
+                //                   ),
+                //                   GestureDetector(
+                //                     onTap: () {
+                //                       Navigator.pushNamed(context, '/second');
+                //                     },
+                //                     child: const Text(
+                //                       "Log in now.",
+                //                       style: TextStyle(
+                //                         fontWeight: FontWeight.w400,
+                //                         fontSize: 12,
+                //                       ),
+                //                     ),
+                //                   )
+                //                 ],
+                //               )
+                //             ] else
+                //               Text(
+                //                 "$checkNum",
+                //                 style: const TextStyle(
+                //                   fontWeight: FontWeight.w600,
+                //                   fontSize: 12,
+                //                 ),
+                //               )
+                //           ],
+                //         ),
+                //       ),
+                //       ListTile(
+                //         title: const Text(
+                //           "Add profile",
+                //           style: TextStyle(
+                //             fontSize: 15,
+                //             fontWeight: FontWeight.w600,
+                //           ),
+                //         ),
+                //         onTap: () async {
+                //           var sharedPref = await SharedPreferences.getInstance();
+                //           var isLoggedIn = sharedPref.getBool(MyAppState.KEYLOGIN);
+                //           print(
+                //               " VALUE OF IS LOGGED IN in userdetails: $isLoggedIn");
+                //           if (isLoggedIn != null) {
+                //             if (isLoggedIn == true) {
+                //               // ignore: use_build_context_synchronously
+                //               // Navigator.push(
+                //               //     context,
+                //               //     MaterialPageRoute(
+                //               //         builder: (context) => RegistrationPage())
+                //               //         );
+                //               Navigator.push(
+                //                   context,
+                //                   MaterialPageRoute(
+                //                       builder: (context) => const AddProfile()));
+                //             } else {
+                //               Navigator.pushNamed(context, '/second');
+                //             }
+                //           } else {
+                //             Navigator.pushNamed(context, '/second');
+                //           }
+                //         },
+                //       ),
+                //       const Divider(
+                //         thickness: 0.5,
+                //       ),
+                //       checkNum == null || checkNum.isEmpty
+                //           ? ListTile(
+                //               title: const Text(
+                //                 'Login',
+                //                 style: TextStyle(
+                //                   fontSize: 15,
+                //                   fontWeight: FontWeight.w600,
+                //                 ),
+                //               ),
+                //               onTap: () {
+                //                 Navigator.pushNamed(context, '/second');
+                //               },
+                //             )
+                //           : ListTile(
+                //               title: const Text(
+                //                 'Logout',
+                //                 style: TextStyle(
+                //                   fontSize: 15,
+                //                   fontWeight: FontWeight.w600,
+                //                 ),
+                //               ),
+                //               onTap: logout),
+                //       const Divider(
+                //         thickness: 0.5,
+                //       ),
+                //     ],
+                //   ),
+                // );
+                Drawer(
               child: ListView(
                 children: [
                   DrawerHeader(
-                    decoration: const BoxDecoration(
-                        color: Color.fromRGBO(217, 217, 217, 1)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Jai-Jinendra!",
-                          style: TextStyle(
-                            // color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        if (checkNum == null || checkNum.isEmpty) ...[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Have you not logged in yet?",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(217, 217, 217, 1),
+                    ),
+                    child: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection("my-profile")
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.active) {
+                          if (snapshot.hasData && snapshot.data != null) {
+                            List data = snapshot.data!.docs;
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Column(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 30,
+                                      backgroundImage: NetworkImage(
+                                        data[0][
+                                            'profilePicture'], // Assuming only one document is retrieved
+                                      ),
+                                    ),
+                                    Text(data[0][
+                                        'name']), // Assuming only one document is retrieved
+                                  ],
                                 ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pushNamed(context, '/second');
-                                },
-                                child: const Text(
-                                  "Log in now.",
+                                const SizedBox(height: 10),
+                                const Text(
+                                  "Jai-Jinendra!",
                                   style: TextStyle(
-                                    fontWeight: FontWeight.w400,
+                                    fontWeight: FontWeight.w600,
                                     fontSize: 12,
                                   ),
                                 ),
-                              )
-                            ],
-                          )
-                        ] else
-                          Text(
-                            "$checkNum",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                            ),
-                          )
-                      ],
+                                const SizedBox(height: 5),
+                                if (checkNum == null || checkNum.isEmpty) ...[
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        "Have you not logged in yet?",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                              context, '/second');
+                                        },
+                                        child: const Text(
+                                          "Log in now.",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                ] else
+                                  Text(
+                                    "$checkNum",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12,
+                                    ),
+                                  )
+                              ],
+                            );
+                          } else {
+                            return const Text("No Data Found");
+                          }
+                        } else {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                      },
                     ),
                   ),
                   ListTile(
                     title: const Text(
-                      "Add profile",
+                      "Add Profile",
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -283,21 +476,13 @@ class _ShowDataState extends ConsumerState<ShowData> {
                     onTap: () async {
                       var sharedPref = await SharedPreferences.getInstance();
                       var isLoggedIn = sharedPref.getBool(MyAppState.KEYLOGIN);
-                      print(
-                          " VALUE OF IS LOGGED IN in userdetails: $isLoggedIn");
                       if (isLoggedIn != null) {
                         if (isLoggedIn == true) {
-                          // ignore: use_build_context_synchronously
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => RegistrationPage())
-                          //         );
-                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const AddProfile())
-                                  );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const AddProfile()),
+                          );
                         } else {
                           Navigator.pushNamed(context, '/second');
                         }
@@ -306,34 +491,30 @@ class _ShowDataState extends ConsumerState<ShowData> {
                       }
                     },
                   ),
-                  const Divider(
-                    thickness: 0.5,
-                  ),
-                  checkNum == null || checkNum.isEmpty
-                      ? ListTile(
-                          title: const Text(
+                  const Divider(thickness: 0.5),
+                  ListTile(
+                    title: checkNum == null || checkNum.isEmpty
+                        ? const Text(
                             'Login',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
                             ),
-                          ),
-                          onTap: () {
-                            Navigator.pushNamed(context, '/second');
-                          },
-                        )
-                      : ListTile(
-                          title: const Text(
+                          )
+                        : const Text(
                             'Logout',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          onTap: logout),
-                  const Divider(
-                    thickness: 0.5,
+                    onTap: checkNum == null || checkNum.isEmpty
+                        ? () {
+                            Navigator.pushNamed(context, '/second');
+                          }
+                        : logout,
                   ),
+                  const Divider(thickness: 0.5),
                 ],
               ),
             );
@@ -568,7 +749,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                           children: [
                                                             ListTile(
                                                               visualDensity:
-                                                                  VisualDensity(
+                                                                  const VisualDensity(
                                                                       vertical:
                                                                           -4),
                                                               leading:

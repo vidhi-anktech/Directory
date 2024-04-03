@@ -48,8 +48,7 @@ class _SponsorDetailScreenState extends State<SponsorDetailScreen>
                   return Column(
                     children: [
                       SizedBox(
-                        height: 600,
-                        // width: 400,
+                        height: MediaQuery.of(context).size.height,
                         width: MediaQuery.of(context).size.width,
                         child: PageView.builder(
                             controller: controller,
