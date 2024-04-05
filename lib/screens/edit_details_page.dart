@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_directory_app/resources.dart';
 import 'package:flutter_directory_app/screens/main_screen.dart';
 import 'package:get/utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -97,15 +98,9 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                 children: [
                   Column(
                     children: [
-                      const Row(
+                       Row(
                         children: [
-                          Text(
-                            "Head of the family/Husband",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
+                         AppConstantText.headOfFamily
                         ],
                       ),
                       const SizedBox(
@@ -115,15 +110,9 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                       const SizedBox(
                         height: 10,
                       ),
-                      const Row(
+                      Row(
                         children: [
-                          Text(
-                            "Spouse",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
+                         AppConstantText.spouse
                         ],
                       ),
                       const SizedBox(
@@ -189,10 +178,7 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                 onPressed: () {
                   _cropImage();
                 },
-                child: const Text(
-                  "Crop Image",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-                ),
+                child: AppConstantText.cropBtn
               )
             ] else
               TextButton(
@@ -206,10 +192,8 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                       });
                     }
                   },
-                  child: const Text(
-                    "Edit Image",
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-                  )),
+                  child: AppConstantText.editBtn
+                  ),
             _buildTextField(
                 "$person Name", "hName", userData["hName"], TextInputType.text),
             _buildTextField("$person Gotra", "hGotra", userData["hGotra"],
@@ -226,8 +210,7 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                 "$person City", "hCity", userData["hCity"], TextInputType.text),
             _buildTextField("$person Current Address", "hCurrentAddress",
                 userData["hCurrentAddress"], TextInputType.text),
-            // _buildTextField("$person Contact Number", "hContact",
-            //     userData["hContact"], TextInputType.phone),
+            
             _buildPhoneTextField(
                 "$person Contact Number",
                 "hContact",
@@ -283,10 +266,7 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                   onPressed: () {
                     _wEditedCropImage();
                   },
-                  child: const Text(
-                    "Crop Image",
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-                  ),
+                  child: AppConstantText.cropBtn
                 )
               ] else
                 TextButton(
@@ -300,11 +280,8 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                         });
                       }
                     },
-                    child: const Text(
-                      "Edit Image",
-                      style:
-                          TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-                    )),
+                    child: AppConstantText.editBtn
+                    ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -374,11 +351,7 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                       onPressed: () {
                         _wCropImage();
                       },
-                      child: const Text(
-                        "Crop Image",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 12),
-                      ),
+                      child: AppConstantText.cropBtn
                     )
                   ] else
                     TextButton(
@@ -392,11 +365,8 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                             });
                           }
                         },
-                        child: const Text(
-                          "Add Image",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 12),
-                        )),
+                        child: AppConstantText.addImageBtn,
+                        ),
                   const SizedBox(height: 5),
                   _buildWifeEmptyTextField('Spouse Name', spouseNameController,
                       'wName', validateWifeName, TextInputType.text),
@@ -468,45 +438,17 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
           keyboardType: TextInputType.phone,
           // controller: controller,
           initialValue: last10Digits,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: Color.fromRGBO(0, 0, 0, 1),
-          ),
+          style: AppTextStyles.initialValueStyle,
           decoration: InputDecoration(
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             labelText: label,
-            labelStyle: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: Color.fromRGBO(0, 0, 0, 1)),
-            enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Color.fromARGB(255, 168, 162, 162),
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Color.fromARGB(255, 168, 162, 162),
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            errorStyle: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
+            labelStyle: AppTextStyles.labelStyle,
+            enabledBorder: AppBorderStyle.enabledBorder,
+            focusedBorder: AppBorderStyle.focusedBorder,
+            errorStyle: AppTextStyles.errorStyle,
+            errorBorder: AppBorderStyle.errorBorder,
+            focusedErrorBorder: AppBorderStyle.focusedErrorBorder
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -536,45 +478,17 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
           textCapitalization: TextCapitalization.words,
           keyboardType: TextInputType.phone,
           controller: spouseContactController,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: Color.fromRGBO(0, 0, 0, 1),
-          ),
+          style: AppTextStyles.initialValueStyle,
           decoration: InputDecoration(
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             labelText: label,
-            labelStyle: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: Color.fromRGBO(0, 0, 0, 1)),
-            enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Color.fromARGB(255, 168, 162, 162),
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Color.fromARGB(255, 168, 162, 162),
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            errorStyle: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
+           labelStyle: AppTextStyles.labelStyle,
+            enabledBorder: AppBorderStyle.enabledBorder,
+            focusedBorder: AppBorderStyle.focusedBorder,
+            errorStyle: AppTextStyles.errorStyle,
+            errorBorder: AppBorderStyle.errorBorder,
+            focusedErrorBorder: AppBorderStyle.focusedErrorBorder
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -617,38 +531,14 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
           decoration: InputDecoration(
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-            enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Color.fromARGB(255, 168, 162, 162),
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Color.fromARGB(255, 168, 162, 162),
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
+            enabledBorder: AppBorderStyle.enabledBorder,
+            focusedBorder: AppBorderStyle.focusedBorder,
             labelText: label,
-            labelStyle: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
+            labelStyle: AppTextStyles.labelStyle,
             errorText: validate ? 'Required' : null,
-            errorStyle: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
+            errorStyle: AppTextStyles.errorStyle,
+            errorBorder: AppBorderStyle.errorBorder,
+            focusedErrorBorder: AppBorderStyle.focusedErrorBorder,
           ),
           onChanged: (value) {
             editedData[field] = value.capitalize ?? "";
@@ -674,41 +564,17 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
           textCapitalization: TextCapitalization.words,
           keyboardType: keyboardType,
           initialValue: initialValue ?? '',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: Color.fromRGBO(0, 0, 0, 1),
-          ),
+          style: AppTextStyles.initialValueStyle,
           decoration: InputDecoration(
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             labelText: label,
-            labelStyle: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: Color.fromRGBO(0, 0, 0, 1)),
-            enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Color.fromARGB(255, 168, 162, 162),
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Color.fromARGB(255, 168, 162, 162),
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
+            labelStyle: AppTextStyles.labelStyle,
+            enabledBorder: AppBorderStyle.enabledBorder,
+            focusedBorder: AppBorderStyle.focusedBorder,
+            errorStyle: AppTextStyles.errorStyle,
+            errorBorder: AppBorderStyle.errorBorder,
+            focusedErrorBorder: AppBorderStyle.focusedErrorBorder
           ),
           onChanged: (value) {
             editedData[field] = value.capitalizeFirst ?? "";
@@ -732,43 +598,17 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
           keyboardType: keyboardType,
           // initialValue: initialValue ?? '',
           initialValue: last10Digits,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: Color.fromRGBO(0, 0, 0, 1),
-          ),
+          style: AppTextStyles.initialValueStyle,
           decoration: InputDecoration(
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             labelText: label,
-            labelStyle: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: Color.fromRGBO(0, 0, 0, 1)),
-            enabledBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Color.fromARGB(255, 168, 162, 162),
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Color.fromARGB(255, 168, 162, 162),
-              ),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            errorStyle:
-                const TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
-            errorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
+            labelStyle: AppTextStyles.labelStyle,
+            enabledBorder: AppBorderStyle.enabledBorder,
+            focusedBorder: AppBorderStyle.focusedBorder,
+            errorStyle: AppTextStyles.errorStyle,
+            errorBorder: AppBorderStyle.errorBorder,
+            focusedErrorBorder: AppBorderStyle.focusedErrorBorder
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -841,20 +681,11 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
         Navigator.pop(context);
       },
       style: ElevatedButton.styleFrom(
-          side: BorderSide(
-              color: Theme.of(context).colorScheme.primary, width: 1),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-          ),
+          side: AppBorderStyle.colorOutlinedBorderBtn,
+          shape: AppBorderStyle.roundedRectangleBorder,
           backgroundColor: Colors.transparent,
           elevation: 0),
-      child: const Text(
-        "Cancel",
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+      child: AppConstantText.cancelBtn
     );
   }
 
@@ -896,17 +727,17 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                       });
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text("Please enter valid phone number")),
+                SnackBar(
+                    content: AppConstantText.invalidPhoneNo),
               );
             }
           }
         } else {
           if (wifeProfilePic == null) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                   content:
-                      Text("Please select an image for spouse to continue")),
+                     AppConstantText.selectSpouseImage),
             );
           } else {
             if (validateForm()) {
@@ -930,13 +761,13 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
                         });
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text("Please Enter Valid Phone Number")),
+                  SnackBar(
+                      content: AppConstantText.invalidPhoneNo),
                 );
               }
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Please fill all required field")),
+                 SnackBar(content: AppConstantText.fillRequiredFieldsAlert),
               );
               setState(() {
                 validateWifeName == true;
@@ -948,19 +779,11 @@ class _EditDetailsState extends ConsumerState<EditDetails> {
         }
       },
       style: ElevatedButton.styleFrom(
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-        ),
+        shape: AppBorderStyle.roundedRectangleBorder,
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
-      child: const Text(
-        "Update",
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+      child: AppConstantText.updateBtn,
     );
   }
 

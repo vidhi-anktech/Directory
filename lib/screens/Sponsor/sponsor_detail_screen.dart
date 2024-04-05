@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_directory_app/resources.dart';
 import 'package:flutter_directory_app/screens/Sponsor/sponsor_card.dart';
 
 class SponsorDetailScreen extends StatefulWidget {
@@ -123,7 +123,7 @@ class _SponsorDetailScreenState extends State<SponsorDetailScreen>
                     ],
                   );
                 } else {
-                  return const Text("No Data Found");
+                  return AppSponsorText.noDataFound;
                 }
               } else {
                 return const Center(

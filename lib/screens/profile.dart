@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_directory_app/resources.dart';
 import 'package:flutter_directory_app/screens/home_page.dart';
 import 'package:flutter_directory_app/main.dart';
 import 'package:flutter_directory_app/providers/phone_number_notifier.dart';
+import 'package:flutter_directory_app/screens/organizing_committee.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -58,15 +61,9 @@ class _MyProfileState extends ConsumerState<MyProfile> {
                   children: [
                     ListTile(
                       leading: GestureDetector(
-                        child: Image.asset('assets/images/customerSupport.png'),
+                        child: Image.asset(Assets.customerSupport),
                       ),
-                      title: const Text(
-                        "Customer Support",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      title: AppConstantText.customerSupport,
                       trailing: IconButton(
                           onPressed: () {},
                           icon: const Icon(
@@ -78,23 +75,32 @@ class _MyProfileState extends ConsumerState<MyProfile> {
                       color: Color.fromRGBO(222, 220, 220, 1),
                       thickness: 0.5,
                     ),
-                    ListTile(
-                      leading: GestureDetector(
-                        child: Image.asset('assets/images/organizingIcon.png'),
-                      ),
-                      title: const Text(
-                        "Organizing Committee",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                    GestureDetector(
+                      onTap: () {
+                          Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const OrganizingCommittee()));
+                      },
+                      child: ListTile(
+                        leading: GestureDetector(
+                          child: Image.asset(Assets.organizingCommittee),
                         ),
+                        title: AppConstantText.organizingCommittee,
+                        trailing: IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const OrganizingCommittee()));
+                            },
+                            icon: const Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              size: 20,
+                            )),
                       ),
-                      trailing: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.arrow_forward_ios_outlined,
-                            size: 20,
-                          )),
                     ),
                     const Divider(
                       color: Color.fromRGBO(222, 220, 220, 1),
@@ -102,15 +108,9 @@ class _MyProfileState extends ConsumerState<MyProfile> {
                     ),
                     ListTile(
                       leading: GestureDetector(
-                        child: Image.asset('assets/images/customerSupport.png'),
+                        child: Image.asset(Assets.customerSupport),
                       ),
-                      title: const Text(
-                        "Developed By",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      title: AppConstantText.developedBy,
                       trailing: IconButton(
                           onPressed: () {},
                           icon: const Icon(
@@ -132,27 +132,15 @@ class _MyProfileState extends ConsumerState<MyProfile> {
                     child: Padding(
                       padding: const EdgeInsets.all(15.0),
                       child: ElevatedButton(
-                        onPressed: () {
-                          logout();
-                        },
-                        style: ElevatedButton.styleFrom(
-                            side: BorderSide(
-                                color: Theme.of(context).colorScheme.primary,
-                                width: 1),
-                            shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5)),
-                            ),
-                            backgroundColor: Colors.transparent,
-                            elevation: 0),
-                        child: const Text(
-                          "Log out",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
+                          onPressed: () {
+                            logout();
+                          },
+                          style: ElevatedButton.styleFrom(
+                              side: AppBorderStyle.colorOutlinedBorderBtn,
+                              shape: AppBorderStyle.roundedRectangleBorder,
+                              backgroundColor: Colors.transparent,
+                              elevation: 0),
+                          child: AppConstantText.logOutBtn),
                     ),
                   )
                 ],

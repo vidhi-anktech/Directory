@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_directory_app/resources.dart';
 import 'package:get/utils.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:uuid/uuid.dart';
@@ -27,11 +29,7 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Sponsor",
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w600
-        ),),
+        title: AppSponsorText.addSponsorTxt,
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
@@ -47,75 +45,90 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
                     children: [
                       Align(
                         alignment: Alignment.topCenter,
-                        child: SizedBox(
-                          child: CircleAvatar(
-                            radius: 60.0,
-                            backgroundColor: const Color.fromARGB(255, 168, 162, 162),
-                            child: GestureDetector(
-                              onTap: () async {
-                                final selectedImage = await ImagePicker()
-                                    .pickImage(source: ImageSource.gallery);
-                                if (selectedImage != null) {
-                                  File convertedFile = File(selectedImage.path);
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              child: CircleAvatar(
+                                radius: 60.0,
+                                backgroundColor:
+                                    const Color.fromARGB(255, 168, 162, 162),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    final selectedImage = await ImagePicker()
+                                        .pickImage(source: ImageSource.gallery);
+                                    if (selectedImage != null) {
+                                      File convertedFile =
+                                          File(selectedImage.path);
 
-                                  setState(() {
-                                    profilePic = convertedFile;
-                                  });
-                                  // print("Image selected");
-                                } else {
-                                  // ignore: use_build_context_synchronously
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Please select an image'),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: Column(
-                                children: [
-                                  if (profilePic == null) ...[
-                                    const SizedBox(
-                                      height: 40,
-                                    ),
-                                    const Expanded(
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: Icon(
-                                          Icons.person_add,
-                                          size: 30,
-                                          color: Colors.black,
+                                      setState(() {
+                                        profilePic = convertedFile;
+                                      });
+                                      // print("Image selected");
+                                    } else {
+                                      // ignore: use_build_context_synchronously
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                         SnackBar(
+                                          content:
+                                             AppSponsorText.chooseImage ,
                                         ),
-                                      ),
-                                    ),
-                                  ],
-                                  Expanded(
-                                    child: CircleAvatar(
-                                      radius: 58.0,
-                                      backgroundColor: Colors.transparent,
-                                      backgroundImage: profilePic != null
-                                          ? FileImage(profilePic!)
-                                          : null,
-                                      child: const Align(
-                                        alignment: Alignment.bottomRight,
+                                      );
+                                    }
+                                  },
+                                  child: Column(
+                                    children: [
+                                      if (profilePic == null) ...[
+                                        const SizedBox(
+                                          height: 40,
+                                        ),
+                                        const Expanded(
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: Icon(
+                                              Icons.person_add,
+                                              size: 30,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                      Expanded(
                                         child: CircleAvatar(
-                                          backgroundColor: Colors.white,
-                                          radius: 18.0,
-                                          child: Icon(
-                                            Icons.camera_alt,
-                                            size: 20.0,
-                                            color: Color(0xFF404040),
+                                          radius: 58.0,
+                                          backgroundColor: Colors.transparent,
+                                          backgroundImage: profilePic != null
+                                              ? FileImage(profilePic!)
+                                              : null,
+                                          child: const Align(
+                                            alignment: Alignment.bottomRight,
+                                            child: CircleAvatar(
+                                              backgroundColor: Colors.white,
+                                              radius: 18.0,
+                                              child: Icon(
+                                                Icons.camera_alt,
+                                                size: 20.0,
+                                                color: Color(0xFF404040),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
+                            if (profilePic != null) ...[
+                              TextButton(
+                                onPressed: () {
+                                  _cropImage();
+                                },
+                                child: AppSponsorText.cropBtn
+                              )
+                            ]
+                          ],
                         ),
                       ),
-                     
                       const SizedBox(height: 15),
                       _buildTextField(
                         'Sponsor Name',
@@ -154,33 +167,14 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
             labelText: label,
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            labelStyle: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: Color.fromRGBO(0, 0, 0, 1)),
-            enabledBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 168, 162, 162)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 168, 162, 162)),
-              borderRadius: BorderRadius.circular(10),
-            ),
+            labelStyle: AppTextStyles.labelStyle,
+            enabledBorder: AppBorderStyle.enabledBorder,
+            focusedBorder: AppBorderStyle.focusedBorder,
             errorText: validate ? 'Required' : null,
             errorStyle:
-                const TextStyle(fontSize: 10, fontWeight: FontWeight.w400),
-            errorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
+                AppTextStyles.errorStyle,
+            errorBorder: AppBorderStyle.errorBorder,
+            focusedErrorBorder: AppBorderStyle.focusedErrorBorder,
           ),
         ),
         const SizedBox(
@@ -206,27 +200,19 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
                   saveSponsor();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please fill in all required fields.'),
+                     SnackBar(
+                      content: AppSponsorText.fillRequiredFieldsAlert,
                     ),
                   );
                   Navigator.pop(context);
                 }
               },
               style: ElevatedButton.styleFrom(
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                ),
+                shape: AppBorderStyle.roundedRectangleBorder,
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Colors.white,
               ),
-              child: const Text(
-                "Save",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              child: AppSponsorText.saveBtn
             ),
           ),
         ],
@@ -261,17 +247,16 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
 
         print(" SPONSOR CREATED!");
         submitForm();
-             ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Sponsor Saved Successfully!'),
+        ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(
+            content: AppSponsorText.savedSuccessAlert,
           ),
         );
         Navigator.pop(context);
-      }
-      else{
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please choose an image'),
+           SnackBar(
+            content: AppSponsorText.chooseImage,
           ),
         );
         Navigator.pop(context);
@@ -279,12 +264,11 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
     } catch (ex) {
       print("ERROR SAVING $ex");
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Oops! Something went wrong'),
+         SnackBar(
+          content:AppSponsorText.wentWrong ,
         ),
       );
-    }
-    finally{
+    } finally {
       setState(() {
         loading = false;
         profilePic = null;
@@ -336,5 +320,31 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
     });
     nameController.clear();
     descriptionController.clear();
+  }
+
+  Future _cropImage() async {
+    if (profilePic != null) {
+      CroppedFile? cropped = await ImageCropper()
+          .cropImage(sourcePath: profilePic!.path, aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio3x2,
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.ratio4x3,
+        CropAspectRatioPreset.ratio16x9
+      ], uiSettings: [
+        AndroidUiSettings(
+            toolbarTitle: 'Crop',
+            cropGridColor: Colors.black,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        IOSUiSettings(title: 'Crop')
+      ]);
+
+      if (cropped != null) {
+        setState(() {
+          profilePic = File(cropped.path);
+        });
+      }
+    }
   }
 }

@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_directory_app/main.dart';
+import 'package:flutter_directory_app/resources.dart';
 import 'package:flutter_directory_app/screens/main_screen.dart';
 import 'package:get/utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -25,8 +26,8 @@ class RegistrationPage extends ConsumerStatefulWidget {
 }
 
 class _RegistrationPageState extends ConsumerState<RegistrationPage> {
-  final snackBar = const SnackBar(
-    content: Text('Oops! Something went wrong'),
+  final snackBar = SnackBar(
+    content: AppConstantText.wentWrong,
   );
   bool validate = false;
   bool _loading = false;
@@ -112,18 +113,12 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
             child: Column(
               children: [
                 Column(children: [
-                  const Row(
+                  Row(
                     children: [
                       Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 8.0, vertical: 0),
-                        child: Text(
-                          'Head of the family',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                          ),
-                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 0),
+                        child: AppConstantText.headOfFamily,
                       ),
                     ],
                   ),
@@ -156,8 +151,8 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                                     print("Image selected");
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Please select an image'),
+                                      SnackBar(
+                                        content: AppConstantText.selectImage,
                                       ),
                                     );
                                   }
@@ -223,19 +218,12 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 Column(
                   children: [
                     const SizedBox(height: 10),
-                    const Row(
+                    Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 0),
-                          child: Text(
-                            'Spouse',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 0),
+                            child: AppConstantText.spouse),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -409,7 +397,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         if (_validateForm()) {
           if (wifeProfilePic != null) {
             if (_validateWifeForm()) {
-             
               saveUser();
             } else {
               setState(() {
@@ -420,15 +407,14 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 );
               });
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Please fill in all required fields.'),
+                 SnackBar(
+                  content: AppConstantText.fillRequiredFieldsSpouseAlert,
                 ),
               );
             }
           }
           // _onLoading();
           else {
-            
             saveUser();
           }
         } else {
@@ -440,28 +426,20 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
             );
           });
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Please fill in all required fields.'),
+            SnackBar(
+              content: AppConstantText.fillRequiredFieldsAlert,
             ),
           );
-         
-          _hideLoading();
+
+          // _hideLoading();
         }
       },
       style: ElevatedButton.styleFrom(
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-        ),
+        shape: AppBorderStyle.roundedRectangleBorder,
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
-      child: const Text(
-        "Save",
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+      child: AppConstantText.save,
     );
   }
 
@@ -472,16 +450,16 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
             context: context,
             builder: (context) {
               return AlertDialog(
-                content: Text('Are you sure you want to exit?'),
+                content: AppConstantText.cancelAlert,
                 actions: <Widget>[
                   TextButton(
-                    child: Text('No'),
+                    child: AppConstantText.noAlert,
                     onPressed: () {
                       Navigator.of(context).pop(false);
                     },
                   ),
                   TextButton(
-                    child: Text('Yes, exit'),
+                    child: AppConstantText.yesAlert,
                     onPressed: () {
                       Navigator.of(context).pop(true);
                       headProfilePic = null;
@@ -491,29 +469,18 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => MainScreen()));
-                     
                     },
                   ),
                 ],
               );
             });
-        
       },
       style: ElevatedButton.styleFrom(
-          side: BorderSide(
-              color: Theme.of(context).colorScheme.primary, width: 1),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-          ),
+          side: AppBorderStyle.colorOutlinedBorderBtn,
+          shape: AppBorderStyle.roundedRectangleBorder,
           backgroundColor: Colors.transparent,
           elevation: 0),
-      child: const Text(
-        "Cancel",
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
+      child: AppConstantText.cancelBtn,
     );
   }
 
@@ -547,16 +514,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
             false,
             TextInputType.text,
           ),
-          // _buildTextField(
-          //   '$title Contact',
-          // title == "House-holder"
-          //     ? headContactController
-          //     : wifeContactController,
-          //   title == "House-holder" ? validateHeadContact : false,
-          //   false,
-          //   TextInputType.phone,
-          // ),
-
           _buildPhoneNumTextField(
             '$title Phone Number',
             title == "House-holder"
@@ -564,7 +521,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 : wifeContactController,
             title == "House-holder" ? validateHeadContact : validateWifeContact,
           ),
-
           _buildTextField(
             '$title Birthplace',
             title == "House-holder"
@@ -633,23 +589,12 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
             labelText: label,
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            labelStyle: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: Color.fromRGBO(0, 0, 0, 1)),
-            enabledBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 168, 162, 162)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 168, 162, 162)),
-              borderRadius: BorderRadius.circular(10),
-            ),
+            labelStyle: AppTextStyles.labelStyle,
+            enabledBorder:AppBorderStyle.enabledBorder,
+            focusedBorder:AppBorderStyle.focusedBorder,
             errorText: validate ? 'Required' : null,
             errorStyle:
-                const TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+                AppTextStyles.errorStyle,
           ),
           onChanged: (value) {
             if (value.length == 6) {
@@ -680,33 +625,13 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
             labelText: label,
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            labelStyle: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: Color.fromRGBO(0, 0, 0, 1)),
-            enabledBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 168, 162, 162)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 168, 162, 162)),
-              borderRadius: BorderRadius.circular(10),
-            ),
+            labelStyle: AppTextStyles.labelStyle,
+            enabledBorder: AppBorderStyle.enabledBorder,
+            focusedBorder: AppBorderStyle.focusedBorder,
             errorText: validate ? 'Required' : null,
-            errorStyle:
-                const TextStyle(fontSize: 10, fontWeight: FontWeight.w400),
-            errorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
+            errorStyle: AppTextStyles.errorStyle,
+            errorBorder: AppBorderStyle.errorBorder,
+            focusedErrorBorder: AppBorderStyle.focusedErrorBorder,
           ),
         ),
         const SizedBox(
@@ -731,33 +656,13 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
             labelText: label,
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            labelStyle: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: Color.fromRGBO(0, 0, 0, 1)),
-            enabledBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 168, 162, 162)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 168, 162, 162)),
-              borderRadius: BorderRadius.circular(10),
-            ),
+            labelStyle: AppTextStyles.labelStyle,
+            enabledBorder: AppBorderStyle.enabledBorder,
+            focusedBorder: AppBorderStyle.focusedBorder,
             errorText: validate ? 'Required' : null,
-            errorStyle:
-                const TextStyle(fontSize: 10, fontWeight: FontWeight.w400),
-            errorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
+            errorStyle: AppTextStyles.errorStyle,
+            errorBorder: AppBorderStyle.errorBorder,
+            focusedErrorBorder: AppBorderStyle.focusedErrorBorder,
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -766,6 +671,9 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
               String? validationResult = _validatePhoneNumber(value);
               return validationResult;
             }
+          },
+          onChanged: (value) {
+            if (controller == headContactController) {}
           },
         ),
         const SizedBox(
@@ -818,12 +726,12 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
 
       if (hName.isNotEmpty && hGotra.isNotEmpty && headProfilePic != null) {
         if (validationResult == null) {
-          // _onLoading();
           final headDownloadUrl =
               await uploadFile(headProfilePic!, "headProfilePictures");
           String? wifeDownloadUrl;
 
           if (wifeProfilePic != null) {
+            _onLoading();
             wifeDownloadUrl =
                 await uploadFile(wifeProfilePic!, "wifeProfilePictures");
             if (wName.isNotEmpty &&
@@ -856,7 +764,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   "wCity": wCity.capitalizeFirst,
                   "wCurrentAddress": wCurrentAddress.capitalizeFirst,
                 };
-                _onLoading();
+                // _onLoading();
                 await FirebaseFirestore.instance
                     .collection("directory-users")
                     .add(userData);
@@ -873,8 +781,8 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   );
                 });
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('User Saved Successfully!'),
+                  SnackBar(
+                    content: AppConstantText.userSavedAlert,
                   ),
                 );
                 _hideLoading();
@@ -883,18 +791,19 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(validationWifeResult)),
                 );
-                 _hideLoading();
+                // _hideLoading();
               }
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
+                 SnackBar(
                   content:
-                      Text('Please fill in all required fields for spouse.'),
+                     AppConstantText.fillRequiredFieldsSpouseAlert ,
                 ),
               );
-               _hideLoading();
+              // _hideLoading();
             }
           } else {
+            _onLoading();
             userData = {
               "hProfilePic": headDownloadUrl,
               "hName": hName.capitalizeFirst,
@@ -920,7 +829,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
               "wCity": null,
               "wCurrentAddress": null,
             };
-            _onLoading();
+            // _onLoading();
             await FirebaseFirestore.instance
                 .collection("directory-users")
                 .add(userData);
@@ -936,22 +845,18 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
               );
             });
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('User Saved Successfully!'),
+               SnackBar(
+                content: AppConstantText.userSavedAlert,
               ),
             );
             // Navigator.pop(context);
             Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MainScreen()));
+                context, MaterialPageRoute(builder: (context) => MainScreen()));
           }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(validationResult)),
           );
-           _hideLoading();
-          // Navigator.pop(context);
           setState(() {
             scrollController.animateTo(
               scrollController.position.minScrollExtent,
@@ -962,11 +867,11 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please choose an image'),
+          SnackBar(
+            content: AppConstantText.selectImage,
           ),
         );
-         _hideLoading();
+        // _hideLoading();
         // Navigator.pop(context);
         setState(() {
           scrollController.animateTo(
@@ -978,10 +883,10 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
       }
     } catch (error) {
       print("Error saving user: $error");
-      _hideLoading();
+      // _hideLoading();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Oops! Something went wrong'),
+         SnackBar(
+          content: AppConstantText.wentWrong,
         ),
       );
     } finally {
@@ -1090,8 +995,9 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
   }
 
   void _hideLoading() {
-    Navigator.pop(context); // Close the loading dialog
-
+    // Navigator.pop(context); // Close the loading dialog
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => MainScreen()));
     setState(() {
       _loading = false;
     });

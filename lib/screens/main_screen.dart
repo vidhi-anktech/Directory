@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_directory_app/main.dart';
+import 'package:flutter_directory_app/resources.dart';
 import 'package:flutter_directory_app/screens/login_page.dart';
 import 'package:flutter_directory_app/screens/profile.dart';
 import 'package:flutter_directory_app/screens/register_details_page.dart';
@@ -96,30 +97,23 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
-        selectedLabelStyle: const TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w400,
-          color: Color.fromRGBO(255, 64, 121, 1),
-        ),
-        unselectedLabelStyle: const TextStyle(
-            color: Color.fromRGBO(0, 0, 0, 1),
-            fontSize: 10,
-            fontWeight: FontWeight.w400),
-        items: const [
+        selectedLabelStyle: AppTextStyles.selectedLabel,
+        unselectedLabelStyle: AppTextStyles.unselectedLabel,
+        items: [
           BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/home.png')),
+            icon: ImageIcon(AssetImage(Assets.homeIcon)),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/add.png')),
+            icon: ImageIcon(AssetImage(Assets.addIcon)),
             label: 'Add',
           ),
           BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/sponsors_icon.png')),
+            icon: ImageIcon(AssetImage(Assets.sponsorIcon)),
             label: 'Sponsors',
           ),
           BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/more.png')),
+            icon: ImageIcon(AssetImage(Assets.moreIcon)),
             label: 'About',
           )
         ],

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_directory_app/main.dart';
+import 'package:flutter_directory_app/resources.dart';
 import 'package:flutter_directory_app/screens/Sponsor/edit_sponsors.dart';
 import 'package:flutter_directory_app/screens/Sponsor/register-sponsor.dart';
 import 'package:flutter_directory_app/screens/Sponsor/sponsor_detail_screen.dart';
@@ -41,10 +42,7 @@ class _SponsorsState extends State<Sponsors> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       appBar: AppBar(
-        title: const Text(
-          "Sponsors",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-        ),
+        title: AppSponsorText.sponsorTitle,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -61,8 +59,8 @@ class _SponsorsState extends State<Sponsors> {
                     itemCount: results.length,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      childAspectRatio: 8.0 / 12.0,
-                      crossAxisCount: 2,
+                      childAspectRatio: 7.0 / 10.0,
+                      crossAxisCount: 1,
                     ),
                     itemBuilder: (context, index) {
                       Future<Widget> editIcon() async {
@@ -88,7 +86,7 @@ class _SponsorsState extends State<Sponsors> {
                               ),
                             );
                           },
-                          child: Image.asset('assets/images/editIcon.png'),
+                          child: Image.asset(Assets.editIcon),
                         );
                         }
                         else{
@@ -145,22 +143,24 @@ class _SponsorsState extends State<Sponsors> {
                                 ),
                               ),
                               Expanded(
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: FadeInImage(
-                                        placeholder: const AssetImage(
-                                          'assets/images/user-profile.avif',
+                                child: Center(
+                                  child: Stack(
+                                    fit: StackFit.loose,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(20.0),
+                                        child: FadeInImage(
+                                          placeholder:  AssetImage(
+                                            Assets.userImage,
+                                          ),
+                                          image: NetworkImage(
+                                            results[index]["sponsorImage"],
+                                          ),
+                                          fit: BoxFit.fill,
                                         ),
-                                        image: NetworkImage(
-                                          results[index]["sponsorImage"],
-                                        ),
-                                        fit: BoxFit.fill,
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                               Row(
@@ -168,9 +168,7 @@ class _SponsorsState extends State<Sponsors> {
                                 children: [
                                   Text(
                                     "${results[index]['sponsorName']}",
-                                    style: const TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w600),
+                                    style: AppTextStyles.titleText
                                   ),
                                 ],
                               ),
@@ -183,7 +181,7 @@ class _SponsorsState extends State<Sponsors> {
                       );
                     });
               } else {
-                return const Center(child: Text("No data Found"));
+                return Center(child: AppSponsorText.noDataFound);
               }
             } else {
               return const Center(child: CircularProgressIndicator());

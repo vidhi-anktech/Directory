@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_directory_app/screens/Sponsor/edit_sponsors.dart';
+import 'package:flutter_directory_app/resources.dart';
 
 class SponsorCard extends StatefulWidget {
   final String sponsorName;
@@ -28,34 +26,34 @@ class _SponsorCardState extends State<SponsorCard> {
     print(
         "PRINTING VALUE OF SPONSORID AND SPONSOR DATA IN SPONSOR CARD PAGE ${widget.userId},,${widget.sponsorData}");
     return Scaffold(
-      body: Card(
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Color.fromARGB(255, 241, 240, 240).withOpacity(0.5),
-                spreadRadius: 2,
-                blurRadius: 5,
-                // offset: Offset(0, 3),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
+      body: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromARGB(255, 241, 240, 240).withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              // offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                children: [
+                  Align(
+                    alignment: Alignment.center,
+                    child: FittedBox(
                       child: SizedBox(
-                        height: 500,
-                        width: 500,
-                        // height: MediaQuery.of(context).size.height,
-                        // width: MediaQuery.of(context).size.width,
+                        // height: 600,
+                        // width: 500,
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
                         child: Image.network(
                           widget.sponsorImageUrl,
                           fit: BoxFit.cover,
@@ -79,39 +77,35 @@ class _SponsorCardState extends State<SponsorCard> {
                         ),
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      width: 500,
-                      decoration: const BoxDecoration(color: Colors.white),
-                      child: Column(
-                        children: [
-                          Text(
-                            widget.sponsorName,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(2),
+                    // width: 500,
+                     width: MediaQuery.of(context).size.width,
+                    decoration: const BoxDecoration(color: Colors.white),
+                    child: Column(
+                      children: [
+                        Text(
+                          widget.sponsorName,
+                          style: AppTextStyles.titleText,
+                          textAlign: TextAlign.center,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Text(
+                            widget.sponsorDescription,
+                            style: AppTextStyles.subHeading,
+                            softWrap: true,
+                            overflow: TextOverflow.visible,
                             textAlign: TextAlign.center,
                           ),
-                          Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Text(
-                              widget.sponsorDescription,
-                              style: const TextStyle(
-                                fontSize: 14,
-                              ),
-                              softWrap: true,
-                              overflow: TextOverflow.visible,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),

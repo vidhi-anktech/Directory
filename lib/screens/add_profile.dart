@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_directory_app/resources.dart';
 import 'package:get/utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
@@ -50,8 +51,8 @@ class _AddProfileState extends State<AddProfile> {
                           } else {
                             // ignore: use_build_context_synchronously
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Please select an image'),
+                               SnackBar(
+                                content: AppConstantText.selectImage,
                               ),
                             );
                           }
@@ -128,33 +129,13 @@ class _AddProfileState extends State<AddProfile> {
             labelText: label,
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            labelStyle: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: Color.fromRGBO(0, 0, 0, 1)),
-            enabledBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 168, 162, 162)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 168, 162, 162)),
-              borderRadius: BorderRadius.circular(10),
-            ),
+            labelStyle: AppTextStyles.labelStyle,
+            enabledBorder: AppBorderStyle.enabledBorder,
+            focusedBorder: AppBorderStyle.focusedBorder,
             errorText: validate ? 'Required' : null,
-            errorStyle:
-                const TextStyle(fontSize: 10, fontWeight: FontWeight.w400),
-            errorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide:
-                  const BorderSide(color: Color.fromARGB(255, 211, 41, 29)),
-              borderRadius: BorderRadius.circular(10),
-            ),
+            errorStyle:AppTextStyles.errorStyle,
+            errorBorder: AppBorderStyle.errorBorder,
+            focusedErrorBorder:AppBorderStyle.focusedErrorBorder,
           ),
         ),
         const SizedBox(
@@ -181,27 +162,19 @@ class _AddProfileState extends State<AddProfile> {
                   saveSponsor();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please fill in all required fields.'),
+                     SnackBar(
+                      content: AppConstantText.fillRequiredFieldsAlert,
                     ),
                   );
                   Navigator.pop(context);
                 }
               },
               style: ElevatedButton.styleFrom(
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                ),
+                shape: AppBorderStyle.roundedRectangleBorder,
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Colors.white,
               ),
-              child: const Text(
-                "Save",
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              child: AppConstantText.saveBtn,
             ),
           ),
         ],
@@ -243,16 +216,16 @@ class _AddProfileState extends State<AddProfile> {
         print(" PROFILE CREATED!");
         submitForm();
              ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Profile Saved Successfully!'),
+          SnackBar(
+            content: AppConstantText.profileSavedAlert,
           ),
         );
         Navigator.pop(context);
       }
       else{
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please choose an image'),
+           SnackBar(
+            content: AppConstantText.selectImage,
           ),
         );
         Navigator.pop(context);
@@ -260,8 +233,8 @@ class _AddProfileState extends State<AddProfile> {
     } catch (ex) {
       print("ERROR SAVING $ex");
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Oops! Something went wrong'),
+         SnackBar(
+          content: AppConstantText.wentWrong,
         ),
       );
     }

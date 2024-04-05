@@ -2,17 +2,15 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_directory_app/resources.dart';
 import 'package:flutter_directory_app/screens/add_profile.dart';
 import 'package:flutter_directory_app/screens/home_page.dart';
 import 'package:flutter_directory_app/main.dart';
 import 'package:flutter_directory_app/providers/phone_number_notifier.dart';
-import 'package:flutter_directory_app/screens/register_details_page.dart';
 import 'package:flutter_directory_app/screens/user-details-page.dart';
 import 'package:get/utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ShowData extends ConsumerStatefulWidget {
@@ -182,11 +180,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                         fillColor: const Color.fromRGBO(246, 246, 246, 1),
                         contentPadding: const EdgeInsets.symmetric(vertical: 0),
                         hintText: "Search",
-                        hintStyle: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Color.fromRGBO(0, 0, 0, 0.4),
-                        ),
+                        hintStyle: AppTextStyles.smallText,
                         enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
                             color: Color.fromRGBO(225, 225, 225, 1),
@@ -199,7 +193,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                           ),
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                         ),
-                        prefixIcon: Image.asset('assets/images/search.png'),
+                        prefixIcon: Image.asset(Assets.searchIcon),
                         prefixIconConstraints: const BoxConstraints(
                           minWidth: 35,
                           minHeight: 30,
@@ -208,7 +202,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                             onTap: () {
                               searchController.clear();
                             },
-                            child: Image.asset('assets/images/cross.png'))),
+                            child: Image.asset(Assets.crossIcon))),
                     onChanged: (searchController) {
                       _allResults = snapshot.data!.docs;
                       searchResultList(_allResults);
@@ -381,8 +375,8 @@ class _ShowDataState extends ConsumerState<ShowData> {
               child: ListView(
                 children: [
                   DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: const Color.fromRGBO(217, 217, 217, 1),
+                    decoration: const BoxDecoration(
+                      color:  Color.fromRGBO(217, 217, 217, 1),
                     ),
                     child: StreamBuilder(
                       stream: FirebaseFirestore.instance
@@ -392,71 +386,51 @@ class _ShowDataState extends ConsumerState<ShowData> {
                         if (snapshot.connectionState ==
                             ConnectionState.active) {
                           if (snapshot.hasData && snapshot.data != null) {
-                            List data = snapshot.data!.docs;
+                            // List data = snapshot.data!.docs;
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 30,
-                                      backgroundImage: NetworkImage(
-                                        data[0][
-                                            'profilePicture'], // Assuming only one document is retrieved
-                                      ),
-                                    ),
-                                    Text(data[0][
-                                        'name']), // Assuming only one document is retrieved
-                                  ],
-                                ),
+                                // Column(
+                                //   children: [
+                                //     CircleAvatar(
+                                //       radius: 30,
+                                //       backgroundImage: NetworkImage(
+                                //         data[0][
+                                //             'profilePicture'], // Assuming only one document is retrieved
+                                //       ),
+                                //     ),
+                                //     Text(data[0][
+                                //         'name']), // Assuming only one document is retrieved
+                                //   ],
+                                // ),
+                                
                                 const SizedBox(height: 10),
-                                const Text(
-                                  "Jai-Jinendra!",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                  ),
-                                ),
+                               AppConstantText.jaiJinendra,
                                 const SizedBox(height: 5),
                                 if (checkNum == null || checkNum.isEmpty) ...[
                                   Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text(
-                                        "Have you not logged in yet?",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 12,
-                                        ),
-                                      ),
+                                      AppConstantText.notLoggedIn,
                                       GestureDetector(
                                         onTap: () {
                                           Navigator.pushNamed(
                                               context, '/second');
                                         },
-                                        child: const Text(
-                                          "Log in now.",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 12,
-                                          ),
-                                        ),
+                                        child: AppConstantText.logInNow
                                       )
                                     ],
                                   )
                                 ] else
                                   Text(
                                     "$checkNum",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12,
-                                    ),
+                                    style: AppTextStyles.buttonText
                                   )
                               ],
                             );
                           } else {
-                            return const Text("No Data Found");
+                            return AppConstantText.noDataFound;
                           }
                         } else {
                           return const Center(
@@ -466,13 +440,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                     ),
                   ),
                   ListTile(
-                    title: const Text(
-                      "Add Profile",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    title: AppConstantText.addProfileTile,
                     onTap: () async {
                       var sharedPref = await SharedPreferences.getInstance();
                       var isLoggedIn = sharedPref.getBool(MyAppState.KEYLOGIN);
@@ -494,20 +462,8 @@ class _ShowDataState extends ConsumerState<ShowData> {
                   const Divider(thickness: 0.5),
                   ListTile(
                     title: checkNum == null || checkNum.isEmpty
-                        ? const Text(
-                            'Login',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          )
-                        : const Text(
-                            'Logout',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                        ?  AppConstantText.loginTile
+                        : AppConstantText.logoutTile,
                     onTap: checkNum == null || checkNum.isEmpty
                         ? () {
                             Navigator.pushNamed(context, '/second');
@@ -677,11 +633,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                               _allResults[index]
                                                                   ["hGotra"] +
                                                               " ",
-                                                          style: const TextStyle(
-                                                              fontSize: 15,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600),
+                                                          style: AppTextStyles.listTileHeading
                                                         ),
                                                         subtitle: Column(
                                                           children: [
@@ -690,10 +642,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                                 Text(
                                                                   "$maskedHPhoneNum",
                                                                   style:
-                                                                      const TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                  ),
+                                                                     AppTextStyles.listTileSubHeading
                                                                 ),
                                                               ],
                                                             ),
@@ -705,28 +654,13 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                                 Text(
                                                                   "${_allResults[index]['hCity']}",
                                                                   style:
-                                                                      const TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                  ),
+                                                                     AppTextStyles.listTileSubHeading
                                                                 ),
                                                                 _allResults[index]
                                                                             [
                                                                             'wProfilePic'] ==
                                                                         null
-                                                                    ? Text(
-                                                                        "more",
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color: Theme.of(context)
-                                                                              .colorScheme
-                                                                              .primary,
-                                                                          fontSize:
-                                                                              12,
-                                                                          fontWeight:
-                                                                              FontWeight.w400,
-                                                                        ),
-                                                                      )
+                                                                    ? AppConstantText.more
                                                                     : Container(),
                                                               ],
                                                             ),
@@ -772,12 +706,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                                             index]
                                                                         [
                                                                         'wGotra'],
-                                                                style: const TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
+                                                                style: AppTextStyles.listTileWifeHeading
                                                               ),
                                                               subtitle: Column(
                                                                 children: [
@@ -790,11 +719,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                                       children: [
                                                                         Text(
                                                                           "$maskedWPhoneNum",
-                                                                          style:
-                                                                              const TextStyle(
-                                                                            fontSize:
-                                                                                11,
-                                                                          ),
+                                                                          style:AppTextStyles.listTileWifeSubHeading
                                                                         ),
                                                                       ],
                                                                     ),
@@ -810,19 +735,9 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                                           Text(
                                                                             _allResults[index]['wCity'],
                                                                             style:
-                                                                                const TextStyle(
-                                                                              fontSize: 11,
-                                                                            ),
+                                                                                AppTextStyles.listTileWifeSubHeading
                                                                           ),
-                                                                          Text(
-                                                                            "more",
-                                                                            style:
-                                                                                TextStyle(
-                                                                              color: Theme.of(context).colorScheme.primary,
-                                                                              fontSize: 12,
-                                                                              fontWeight: FontWeight.w400,
-                                                                            ),
-                                                                          ),
+                                                                         AppConstantText.more
                                                                         ])
                                                                 ],
                                                               ),
@@ -938,11 +853,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                               resultList[index]
                                                                   ["hGotra"] +
                                                               " ",
-                                                          style: const TextStyle(
-                                                              fontSize: 15,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600),
+                                                          style: AppTextStyles.listTileHeading
                                                         ),
                                                         subtitle: Column(
                                                           children: [
@@ -953,29 +864,13 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                               children: [
                                                                 Text(
                                                                   "$maskedHResultedPhoneNum",
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                  ),
+                                                                 style: AppTextStyles.listTileSubHeading,
                                                                 ),
                                                                 resultList[index]
                                                                             [
                                                                             'wProfilePic'] ==
                                                                         null
-                                                                    ? Text(
-                                                                        "more",
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color: Theme.of(context)
-                                                                              .colorScheme
-                                                                              .primary,
-                                                                          fontSize:
-                                                                              12,
-                                                                          fontWeight:
-                                                                              FontWeight.w400,
-                                                                        ),
-                                                                      )
+                                                                    ? AppConstantText.more
                                                                     : Container(),
                                                               ],
                                                             ),
@@ -984,10 +879,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                                 Text(
                                                                   "${resultList[index]['hCity']}",
                                                                   style:
-                                                                      const TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                  ),
+                                                                      AppTextStyles.listTileSubHeading
                                                                 ),
                                                               ],
                                                             ),
@@ -1029,12 +921,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                                             index]
                                                                         [
                                                                         'wGotra'],
-                                                                style: const TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold),
+                                                                style: AppTextStyles.listTileWifeHeading
                                                               ),
                                                               subtitle: Column(
                                                                 children: [
@@ -1043,10 +930,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                                       Text(
                                                                         "$maskedWResultedPhoneNum",
                                                                         style:
-                                                                            const TextStyle(
-                                                                          fontSize:
-                                                                              11,
-                                                                        ),
+                                                                           AppTextStyles.listTileWifeSubHeading
                                                                       ),
                                                                     ],
                                                                   ),
@@ -1058,24 +942,9 @@ class _ShowDataState extends ConsumerState<ShowData> {
                                                                       Text(
                                                                         "${resultList[index]['wCity']}",
                                                                         style:
-                                                                            const TextStyle(
-                                                                          fontSize:
-                                                                              11,
-                                                                        ),
+                                                                            AppTextStyles.listTileWifeSubHeading
                                                                       ),
-                                                                      Text(
-                                                                        "more",
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color: Theme.of(context)
-                                                                              .colorScheme
-                                                                              .primary,
-                                                                          fontSize:
-                                                                              12,
-                                                                          fontWeight:
-                                                                              FontWeight.w400,
-                                                                        ),
-                                                                      )
+                                                                      AppConstantText.more
                                                                     ],
                                                                   ),
                                                                 ],
@@ -1102,7 +971,7 @@ class _ShowDataState extends ConsumerState<ShowData> {
                         );
                       }
                     } else {
-                      return const Text("No data");
+                      return AppConstantText.noDataFound;
                     }
                   } else {
                     return const Center(child: CircularProgressIndicator());
@@ -1117,71 +986,72 @@ class _ShowDataState extends ConsumerState<ShowData> {
     );
   }
 
-  Widget citySearchBar() {
-    return Stack(children: [
-      GestureDetector(
-        onTap: _doToggle,
-        child: const SizedBox(
-            height: kToolbarHeight * 0.8,
-            child: Row(
-              children: [
-                Icon(
-                  Icons.location_on,
-                  size: 25.0,
-                ),
-                SizedBox(
-                  width: 10.0,
-                ),
-                Text(
-                  "Tap to select your city",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            )),
-      ),
-      AnimatedContainer(
-        width: _toggle ? 0 : MediaQuery.of(context).size.width,
-        transform: Matrix4.translationValues(
-            _toggle ? MediaQuery.of(context).size.width : 0, 0, 0),
-        duration: const Duration(seconds: 1),
-        height: kToolbarHeight * 0.8,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(5.0),
-          border: Border.all(
-            width: 0.5,
-            color: Color.fromRGBO(225, 225, 225, 1),
-          ),
-        ),
-        child: TextField(
-          controller: searchCityController,
-          textInputAction: TextInputAction.search,
-          decoration: InputDecoration(
-              contentPadding: EdgeInsets.zero,
-              label: const Text("Enter Your City"),
-              labelStyle:
-                  const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
-              prefixIcon: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 1),
-                  opacity: _toggle ? 0 : 1,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      size: 20,
-                    ),
-                    onPressed: _doToggle,
-                  )),
-              border: InputBorder.none),
-          onChanged: (val) {
-            setState(() {
-              selectedCity = searchCityController.text.trim().capitalizeFirst;
-            });
-          },
-        ),
-      )
-    ]);
-  }
+  // Widget citySearchBar() {
+  //   return Stack(children: [
+  //     GestureDetector(
+  //       onTap: _doToggle,
+  //       child: const SizedBox(
+  //           height: kToolbarHeight * 0.8,
+  //           child: Row(
+  //             children: [
+  //               Icon(
+  //                 Icons.location_on,
+  //                 size: 25.0,
+  //               ),
+  //               SizedBox(
+  //                 width: 10.0,
+  //               ),
+  //               Text(
+  //                 "Tap to select your city",
+  //                 style: TextStyle(
+  //                   fontSize: 14,
+  //                   fontWeight: FontWeight.w600,
+  //                 ),
+  //               ),
+  //             ],
+  //           )),
+  //     ),
+  //     AnimatedContainer(
+  //       width: _toggle ? 0 : MediaQuery.of(context).size.width,
+  //       transform: Matrix4.translationValues(
+  //           _toggle ? MediaQuery.of(context).size.width : 0, 0, 0),
+  //       duration: const Duration(seconds: 1),
+  //       height: kToolbarHeight * 0.8,
+  //       decoration: BoxDecoration(
+  //         color: Colors.white,
+  //         borderRadius: BorderRadius.circular(5.0),
+  //         border: Border.all(
+  //           width: 0.5,
+  //           color: Color.fromRGBO(225, 225, 225, 1),
+  //         ),
+  //       ),
+  //       child: TextField(
+  //         controller: searchCityController,
+  //         textInputAction: TextInputAction.search,
+  //         decoration: InputDecoration(
+  //             contentPadding: EdgeInsets.zero,
+  //             label: const Text("Enter Your City"),
+  //             labelStyle:
+  //                 const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+  //             prefixIcon: AnimatedOpacity(
+  //                 duration: const Duration(milliseconds: 1),
+  //                 opacity: _toggle ? 0 : 1,
+  //                 child: IconButton(
+  //                   icon: const Icon(
+  //                     Icons.arrow_back_ios,
+  //                     size: 20,
+  //                   ),
+  //                   onPressed: _doToggle,
+  //                 )),
+  //             border: InputBorder.none),
+  //         onChanged: (val) {
+  //           setState(() {
+  //             selectedCity = searchCityController.text.trim().capitalizeFirst;
+  //           });
+  //         },
+  //       ),
+  //     )
+  //   ]);
+  // }
+
 }

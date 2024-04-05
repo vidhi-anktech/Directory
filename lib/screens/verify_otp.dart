@@ -4,8 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_directory_app/main.dart';
+import 'package:flutter_directory_app/resources.dart';
 import 'package:flutter_directory_app/screens/main_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -186,15 +186,7 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen>
             children: [
               Row(
                 children: [
-                  Text(
-                    "Verify with OTP",
-                    style: GoogleFonts.openSans(
-                        textStyle: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20,
-                      color: Color.fromRGBO(0, 0, 0, 1),
-                    )),
-                  ),
+                  AppConstantText.verifyTitleText
                 ],
               ),
               const SizedBox(
@@ -204,12 +196,7 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen>
                 children: [
                   Text(
                     "Sent via SMS to ${widget.phoneNo}",
-                    style: GoogleFonts.openSans(
-                        textStyle: const TextStyle(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 12,
-                      color: Color.fromRGBO(122, 122, 122, 1),
-                    )),
+                    style: AppTextStyles.smallText
                   ),
                 ],
               ),
@@ -257,51 +244,21 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen>
                                     "RESENDING OTP ON PHONE NUMBER : ${widget.phoneNo}");
                                 resendOTP(widget.phoneNo);
                               },
-                              child: Text("Resend",
-                                  style: GoogleFonts.openSans(
-                                      textStyle: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                    color: Color.fromRGBO(0, 0, 0, 1),
-                                  ))),
+                              child: AppConstantText.resendBtn
                             )
-                          : Text(
-                              "Resend",
-                              style: GoogleFonts.openSans(
-                                textStyle: const TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12,
-                                  color: Color.fromRGBO(122, 122, 122, 1),
-                                ),
-                              ),
-                            )
+                          : AppConstantText.resendTxt
                     ],
                   ),
                   const SizedBox(
                     width: 5,
                   ),
-                  Text(
-                    "OTP in",
-                    style: GoogleFonts.openSans(
-                      textStyle: const TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12,
-                        color: Color.fromRGBO(122, 122, 122, 1),
-                      ),
-                    ),
-                  ),
+                AppConstantText.otpIn,
                   const SizedBox(
                     width: 5,
                   ),
                   Text(
                     "00:${_countDown.toString()}",
-                    style: GoogleFonts.openSans(
-                      textStyle: const TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 12,
-                        color: Color.fromRGBO(122, 122, 122, 1),
-                      ),
-                    ),
+                    style: AppTextStyles.smallText
                   ),
                 ],
               ),

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_directory_app/providers/location_notifier.dart';
+import 'package:flutter_directory_app/resources.dart';
 import 'package:flutter_directory_app/screens/main_screen.dart';
-import 'package:flutter_directory_app/screens/show_data.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -47,20 +45,20 @@ class _HomePageState extends ConsumerState<HomePage> {
   homeContent() {
     print(
         "VALUE OF COUNTRY, STATE, CITY $countryValue , $stateValue , $cityValue");
-    final notifier = ref.read(locationNotifier.notifier);
+    // final notifier = ref.read(locationNotifier.notifier);
 
     return LayoutBuilder(
       builder: (context, constraints) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  'assets/images/logo.png',
+                  Assets.logoImage,
                   fit: BoxFit.cover,
                 ),
               ],
@@ -69,52 +67,42 @@ class _HomePageState extends ConsumerState<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Palliwal Jain Telephone Directory",
-                    style: GoogleFonts.anekDevanagari(
-                        textStyle: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                            color: Theme.of(context).colorScheme.primary)))
+                // Text("Palliwal Jain Telephone Directory",
+                //     style: GoogleFonts.anekDevanagari(
+                //         textStyle: TextStyle(
+                //             fontSize: 20,
+                //             fontWeight: FontWeight.w500,
+                //             color: Theme.of(context).colorScheme.primary)))
+                AppConstantText.mainText,
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 40,),
+                const SizedBox(
+                  height: 40,
+                ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          side: BorderSide(
-                              color: Theme.of(context).colorScheme.primary,
-                              width: 1),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
-                          ),
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                          foregroundColor:
-                              Colors.white,
+                          side: AppBorderStyle.colorOutlinedBorderBtn,
+                          shape: AppBorderStyle.roundedRectangleBorder,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          foregroundColor: Colors.white,
                           elevation: 0),
-                      onPressed: ()  {
-                        
+                      onPressed: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const MainScreen()));
                       },
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            "Get Started",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                                color: Colors.white
-                              ),
-                            
-                          ),
+                          AppConstantText.getStartedBtn
                         ],
                       ),
                     ),
