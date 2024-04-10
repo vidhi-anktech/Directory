@@ -49,13 +49,15 @@ class _SponsorsState extends State<Sponsors> {
         child: StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection("directory-sponsors")
+              .orderBy("sponsorPriority")
               .snapshots()
               .asBroadcastStream(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.hasData && snapshot.data != null) {
                 results = snapshot.data!.docs;
-                return GridView.builder(
+                return 
+                GridView.builder(
                     itemCount: results.length,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
@@ -63,39 +65,104 @@ class _SponsorsState extends State<Sponsors> {
                       crossAxisCount: 1,
                     ),
                     itemBuilder: (context, index) {
+
                       Future<Widget> editIcon() async {
                         var sharedPref = await SharedPreferences.getInstance();
                         bool? isAdmin = sharedPref.getBool(MyAppState.ISADMIN);
                         print("Are you an admin for edit icon? $isAdmin");
-                        if(isAdmin == true){
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditSponsor(
-                                  userId: results[index].id,
-                                  sponsorData: results[index].data()
-                                      as Map<String, dynamic>,
-                                  sponsorName: results[index]['sponsorName'],
-                                  sponsorDescription: results[index]
-                                      ['sponsorDescription'],
-                                  sponsorImageUrl: results[index]
-                                      ['sponsorImage'],
+                        if (isAdmin == true) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditSponsor(
+                                    userId: results[index].id,
+                                    sponsorData: results[index].data()
+                                        as Map<String, dynamic>,
+                                    sponsorName: results[index]['sponsorName'],
+                                    sponsorDescription: results[index]
+                                        ['sponsorDescription'],
+                                    sponsorImageUrl: results[index]
+                                        ['sponsorImage'],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                          child: Image.asset(Assets.editIcon),
-                        );
+                              );
+                            },
+                            child: Image.asset(Assets.editIcon),
+                          );
+                        } else {
+                          return Container();
                         }
-                        else{
+                      }
+
+                      Future<Widget> deleteSponsor(String docId) async {
+                        var sharedPref = await SharedPreferences.getInstance();
+                        bool? isAdmin = sharedPref.getBool(MyAppState.ISADMIN);
+                        if (isAdmin == true) {
+                          return GestureDetector(
+                            onTap: () async {
+                              final value = await showDialog<bool>(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      content: AppConstantText.deleteAlert,
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: AppConstantText.noAlert,
+                                          onPressed: () {
+                                            Navigator.of(context).pop(false);
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: AppConstantText.yesDeleteAlert,
+                                          onPressed: () async {
+                                            try {
+                                              await FirebaseFirestore.instance
+                                                  .collection(
+                                                      "directory-sponsors")
+                                                  .doc(docId)
+                                                  .delete();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                      "Sponsor deleted successfully"),
+                                                ),
+                                              );
+                                               Navigator.of(context).pop(false);
+                                            } catch (error) {
+                                              print(
+                                                  "Error deleting sponsor: $error");
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                      "Failed to delete sponsor"),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            },
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                          );
+                        } else {
                           return Container();
                         }
                       }
 
                       return GestureDetector(
                         onTap: () {
+                          var sponsorPriority =
+                              results[index]['sponsorPriority'];
+                          print("SPONSOR-PRIORITY $sponsorPriority");
                           var sponsorData =
                               results[index].data() as Map<String, dynamic>;
                           var docId = results[index].id;
@@ -139,6 +206,24 @@ class _SponsorsState extends State<Sponsors> {
                                         }
                                       },
                                     ),
+                                    const SizedBox(
+                                      width: 8,
+                                    ),
+                                    FutureBuilder(
+                                        future:
+                                            deleteSponsor(results[index].id),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return CircularProgressIndicator(); // or any other loading indicator
+                                          } else if (snapshot.hasError) {
+                                            return Text(
+                                                'Error: ${snapshot.error}');
+                                          } else {
+                                            return snapshot.data ??
+                                                Container(); // return the button widget or an empty container if data is null
+                                          }
+                                        }),
                                   ],
                                 ),
                               ),
@@ -150,7 +235,7 @@ class _SponsorsState extends State<Sponsors> {
                                       Padding(
                                         padding: const EdgeInsets.all(20.0),
                                         child: FadeInImage(
-                                          placeholder:  AssetImage(
+                                          placeholder: AssetImage(
                                             Assets.userImage,
                                           ),
                                           image: NetworkImage(
@@ -166,10 +251,8 @@ class _SponsorsState extends State<Sponsors> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    "${results[index]['sponsorName']}",
-                                    style: AppTextStyles.titleText
-                                  ),
+                                  Text("${results[index]['sponsorName']}",
+                                      style: AppTextStyles.titleText),
                                 ],
                               ),
                               const SizedBox(
@@ -180,6 +263,8 @@ class _SponsorsState extends State<Sponsors> {
                         ),
                       );
                     });
+              
+              
               } else {
                 return Center(child: AppSponsorText.noDataFound);
               }

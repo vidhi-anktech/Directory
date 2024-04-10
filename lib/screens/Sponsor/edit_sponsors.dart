@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_directory_app/resources.dart';
 import 'package:flutter_directory_app/screens/main_screen.dart';
 import 'package:get/utils.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -33,13 +34,16 @@ class EditSponsor extends StatefulWidget {
 class _EditSponsorState extends State<EditSponsor> {
   final sponsorNameController = TextEditingController();
   final sponsorDescController = TextEditingController();
+  final priorityController = TextEditingController();
   File? editedProfilePic;
   Map<String, dynamic> editedData = {};
   bool _loading = false;
   bool validate = false;
+  bool validateName = false;
 
   @override
   Widget build(BuildContext context) {
+    print("PRINTING SPONSOR DATA ${widget.sponsorData}");
     print(
         "PRINTING VALUE OF SPONSORID AND SPONSOR DATA IN SPONSOR EDIT DETAIL PAGE ${widget.userId},,${widget.sponsorData}");
     Map<String, dynamic> sponsorData = widget.sponsorData;
@@ -98,7 +102,6 @@ class _EditSponsorState extends State<EditSponsor> {
                           ),
                         )
                       ] else
-                       
                         TextButton(
                           onPressed: () async {
                             final selectedImage = await ImagePicker()
@@ -119,34 +122,25 @@ class _EditSponsorState extends State<EditSponsor> {
                       TextFormField(
                         textCapitalization: TextCapitalization.words,
                         keyboardType: TextInputType.text,
-                        // initialValue: sponsorData["sponsorName"],
                         initialValue: widget.sponsorName,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: Color.fromRGBO(0, 0, 0, 1),
-                        ),
+                        style: AppTextStyles.initialValueStyle,
                         decoration: InputDecoration(
                           contentPadding: const EdgeInsets.symmetric(
                               vertical: 5, horizontal: 10),
                           labelText: "title",
-                          labelStyle: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: Color.fromRGBO(0, 0, 0, 1)),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 168, 162, 162),
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color.fromARGB(255, 168, 162, 162),
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                          labelStyle: AppTextStyles.labelStyle,
+                          enabledBorder: AppBorderStyle.enabledBorder,
+                          focusedBorder: AppBorderStyle.focusedBorder,
+                          errorText: validate ? 'Required' : null,
+                          errorStyle: AppTextStyles.errorStyle,
+                          errorBorder: AppBorderStyle.errorBorder,
+                          focusedErrorBorder: AppBorderStyle.focusedErrorBorder,
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Required';
+                          }
+                        },
                         onChanged: (value) {
                           editedData["sponsorName"] =
                               value.capitalizeFirst ?? "";
@@ -190,6 +184,29 @@ class _EditSponsorState extends State<EditSponsor> {
                         onChanged: (value) {
                           editedData["sponsorDescription"] =
                               value.capitalizeFirst ?? "";
+                        },
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        initialValue: sponsorData['sponsorPriority'].toString(),
+                        keyboardType: TextInputType.number,
+                        cursorColor: Colors.black,
+                        decoration: InputDecoration(
+                          labelText: "edit priority",
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 10),
+                          labelStyle: AppTextStyles.labelStyle,
+                          enabledBorder: AppBorderStyle.enabledBorder,
+                          focusedBorder: AppBorderStyle.focusedBorder,
+                          errorText: validate ? 'Required' : null,
+                          errorStyle: AppTextStyles.errorStyle,
+                          errorBorder: AppBorderStyle.errorBorder,
+                          focusedErrorBorder: AppBorderStyle.focusedErrorBorder,
+                        ),
+                        onChanged: (value) {
+                          editedData["sponsorPriority"] = int.parse(value);
                         },
                       ),
                       const SizedBox(height: 10),
@@ -280,12 +297,38 @@ class _EditSponsorState extends State<EditSponsor> {
     );
   }
 
+  void _onLoading() {
+    setState(() {
+      _loading = true;
+    });
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: 50,
+          width: 50,
+          child: Center(
+            child: LoadingAnimationWidget.twistingDots(
+              leftDotColor: const Color.fromRGBO(5, 111, 146, 1),
+              rightDotColor: Theme.of(context).colorScheme.primary,
+              size: 20,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildUpdateNowButton() {
     return ElevatedButton(
       onPressed: () async {
         setState(() {
           _loading = true;
+          validate = true;
         });
+        // _onLoading();
+
         await _uploadAndSaveImage();
         await FirebaseFirestore.instance
             .collection("directory-sponsors")
@@ -293,10 +336,6 @@ class _EditSponsorState extends State<EditSponsor> {
             .update(editedData)
             .then((value) => {
                   print("HURRAAAYYY! DATA UPDATED SUCCESSFULLY"),
-                  // Navigator.pushReplacement(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => const MainScreen())),
                   Navigator.pop(context),
                 });
       },
@@ -324,19 +363,12 @@ class _EditSponsorState extends State<EditSponsor> {
         editedData['sponsorImage'] = downloadUrl;
       });
     }
+  }
 
-    // if (wifeEditedProfilePic != null) {
-    //   final wDownloadUrl =
-    //       await uploadFile(wifeEditedProfilePic!, "wifeProfilePictures");
-    //   setState(() {
-    //     editedData['wProfilePic'] = wDownloadUrl;
-    //   });
-    // } else if (wifeProfilePic != null) {
-    //   final wifeDownloadUrl =
-    //       await uploadFile(wifeProfilePic!, "wifeProfilePictures");
-    //   setState(() {
-    //     editedData['wProfilePic'] = wifeDownloadUrl;
-    //   });
-    // }
+  _validateForm() {
+    validateName = sponsorNameController.text.isEmpty;
+    editedProfilePic == null;
+
+    return !validateName;
   }
 }

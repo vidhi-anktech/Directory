@@ -439,27 +439,27 @@ class _ShowDataState extends ConsumerState<ShowData> {
                       },
                     ),
                   ),
-                  ListTile(
-                    title: AppConstantText.addProfileTile,
-                    onTap: () async {
-                      var sharedPref = await SharedPreferences.getInstance();
-                      var isLoggedIn = sharedPref.getBool(MyAppState.KEYLOGIN);
-                      if (isLoggedIn != null) {
-                        if (isLoggedIn == true) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const AddProfile()),
-                          );
-                        } else {
-                          Navigator.pushNamed(context, '/second');
-                        }
-                      } else {
-                        Navigator.pushNamed(context, '/second');
-                      }
-                    },
-                  ),
-                  const Divider(thickness: 0.5),
+                  // ListTile(
+                  //   title: AppConstantText.addProfileTile,
+                  //   onTap: () async {
+                  //     var sharedPref = await SharedPreferences.getInstance();
+                  //     var isLoggedIn = sharedPref.getBool(MyAppState.KEYLOGIN);
+                  //     if (isLoggedIn != null) {
+                  //       if (isLoggedIn == true) {
+                  //         Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => const AddProfile()),
+                  //         );
+                  //       } else {
+                  //         Navigator.pushNamed(context, '/second');
+                  //       }
+                  //     } else {
+                  //       Navigator.pushNamed(context, '/second');
+                  //     }
+                  //   },
+                  // ),
+                  // const Divider(thickness: 0.5),
                   ListTile(
                     title: checkNum == null || checkNum.isEmpty
                         ?  AppConstantText.loginTile

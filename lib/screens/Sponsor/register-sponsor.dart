@@ -20,6 +20,8 @@ class SponsorRegistration extends StatefulWidget {
 class _SponsorRegistrationState extends State<SponsorRegistration> {
   final nameController = TextEditingController();
   final descriptionController = TextEditingController();
+  final priorityController = TextEditingController();
+
   bool validateName = false;
   File? profilePic;
   bool validate = false;
@@ -48,7 +50,8 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
                         child: Column(
                           children: [
                             SizedBox(
-                              child: CircleAvatar(
+                              child: 
+                              CircleAvatar(
                                 radius: 60.0,
                                 backgroundColor:
                                     const Color.fromARGB(255, 168, 162, 162),
@@ -68,9 +71,8 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
                                       // ignore: use_build_context_synchronously
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
-                                         SnackBar(
-                                          content:
-                                             AppSponsorText.chooseImage ,
+                                        SnackBar(
+                                          content: AppSponsorText.chooseImage,
                                         ),
                                       );
                                     }
@@ -117,14 +119,14 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
                                   ),
                                 ),
                               ),
+                          
                             ),
                             if (profilePic != null) ...[
                               TextButton(
-                                onPressed: () {
-                                  _cropImage();
-                                },
-                                child: AppSponsorText.cropBtn
-                              )
+                                  onPressed: () {
+                                    _cropImage();
+                                  },
+                                  child: AppSponsorText.cropBtn)
                             ]
                           ],
                         ),
@@ -140,6 +142,7 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
                         descriptionController,
                         false,
                       ),
+                      _buildPriorityTextField(false),
                       _buildAddButton(),
                     ],
                   ),
@@ -171,8 +174,37 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
             enabledBorder: AppBorderStyle.enabledBorder,
             focusedBorder: AppBorderStyle.focusedBorder,
             errorText: validate ? 'Required' : null,
-            errorStyle:
-                AppTextStyles.errorStyle,
+            errorStyle: AppTextStyles.errorStyle,
+            errorBorder: AppBorderStyle.errorBorder,
+            focusedErrorBorder: AppBorderStyle.focusedErrorBorder,
+          ),
+        ),
+        const SizedBox(
+          height: 10,
+        )
+      ],
+    );
+  }
+
+  _buildPriorityTextField(
+    bool validate,
+  ) {
+    return Column(
+      children: [
+        TextField(
+          // textCapitalization: TextCapitalization.words,
+          keyboardType: TextInputType.number,
+          cursorColor: Colors.black,
+          controller: priorityController,
+          decoration: InputDecoration(
+            labelText: "select priority",
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            labelStyle: AppTextStyles.labelStyle,
+            enabledBorder: AppBorderStyle.enabledBorder,
+            focusedBorder: AppBorderStyle.focusedBorder,
+            errorText: validate ? 'Required' : null,
+            errorStyle: AppTextStyles.errorStyle,
             errorBorder: AppBorderStyle.errorBorder,
             focusedErrorBorder: AppBorderStyle.focusedErrorBorder,
           ),
@@ -191,29 +223,28 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
         children: [
           Expanded(
             child: ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  validate = true;
-                });
-                _onLoading();
-                if (_validateForm()) {
-                  saveSponsor();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                     SnackBar(
-                      content: AppSponsorText.fillRequiredFieldsAlert,
-                    ),
-                  );
-                  Navigator.pop(context);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                shape: AppBorderStyle.roundedRectangleBorder,
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Colors.white,
-              ),
-              child: AppSponsorText.saveBtn
-            ),
+                onPressed: () {
+                  setState(() {
+                    validate = true;
+                  });
+                  _onLoading();
+                  if (_validateForm()) {
+                    saveSponsor();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: AppSponsorText.fillRequiredFieldsAlert,
+                      ),
+                    );
+                    Navigator.pop(context);
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: AppBorderStyle.roundedRectangleBorder,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Colors.white,
+                ),
+                child: AppSponsorText.saveBtn),
           ),
         ],
       ),
@@ -231,31 +262,29 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
     try {
       String sponsorName = nameController.text.trim();
       String sponsorDescription = descriptionController.text.trim();
-
+      var sponsorPriority = priorityController.text.trim();
       if (sponsorName.isNotEmpty && profilePic != null) {
         final downloadUrl = await uploadFile(profilePic!);
-
         Map<String, dynamic> sponsorData = {
           "sponsorImage": downloadUrl,
           "sponsorName": sponsorName.capitalize,
           "sponsorDescription": sponsorDescription.capitalizeFirst,
+          "sponsorPriority": int.parse(sponsorPriority),
         };
-
         await FirebaseFirestore.instance
             .collection("directory-sponsors")
             .add(sponsorData);
-
         print(" SPONSOR CREATED!");
         submitForm();
         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(
+          SnackBar(
             content: AppSponsorText.savedSuccessAlert,
           ),
         );
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(
+          SnackBar(
             content: AppSponsorText.chooseImage,
           ),
         );
@@ -264,8 +293,8 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
     } catch (ex) {
       print("ERROR SAVING $ex");
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(
-          content:AppSponsorText.wentWrong ,
+        SnackBar(
+          content: AppSponsorText.wentWrong,
         ),
       );
     } finally {
@@ -287,7 +316,7 @@ class _SponsorRegistrationState extends State<SponsorRegistration> {
       return await taskSnapshot.ref.getDownloadURL();
     } catch (error) {
       print("Error uploading file: $error");
-      throw error;
+      rethrow;
     }
   }
 

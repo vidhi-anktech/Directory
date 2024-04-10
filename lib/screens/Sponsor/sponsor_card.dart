@@ -81,7 +81,7 @@ class _SponsorCardState extends State<SponsorCard> {
                   Container(
                     padding: const EdgeInsets.all(2),
                     // width: 500,
-                     width: MediaQuery.of(context).size.width,
+                    width: MediaQuery.of(context).size.width,
                     decoration: const BoxDecoration(color: Colors.white),
                     child: Column(
                       children: [

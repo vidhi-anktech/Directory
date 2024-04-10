@@ -12,6 +12,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
@@ -106,124 +107,27 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
 
     return Scaffold(
       appBar: AppBar(),
-      body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 5),
-          child: SingleChildScrollView(
-            controller: scrollController,
-            child: Column(
-              children: [
-                Column(children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 0),
-                        child: AppConstantText.headOfFamily,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Card(
-                    elevation: 0,
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 10),
-                        Align(
-                          alignment: Alignment.topCenter,
-                          child: SizedBox(
-                            child: CircleAvatar(
-                              radius: 60.0,
-                              backgroundColor:
-                                  Color.fromARGB(255, 168, 162, 162),
-                              child: GestureDetector(
-                                onTap: () async {
-                                  final hSelectedImage = await ImagePicker()
-                                      .pickImage(source: ImageSource.gallery);
-                                  if (hSelectedImage != null) {
-                                    File convertedFile =
-                                        File(hSelectedImage.path);
-
-                                    // Crop feature for convertedFile of house-holder
-
-                                    setState(() {
-                                      headProfilePic = convertedFile;
-                                    });
-                                    print("Image selected");
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: AppConstantText.selectImage,
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: Column(
-                                  children: [
-                                    if (headProfilePic == null) ...[
-                                      const SizedBox(
-                                        height: 40,
-                                      ),
-                                      const Expanded(
-                                        child: Align(
-                                          alignment: Alignment.center,
-                                          child: Icon(
-                                            Icons.person_add,
-                                            size: 30,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                    Expanded(
-                                      child: CircleAvatar(
-                                        radius: 58.0,
-                                        backgroundColor: Colors.transparent,
-                                        backgroundImage: headProfilePic != null
-                                            ? FileImage(headProfilePic!)
-                                            : null,
-                                        child: const Align(
-                                          alignment: Alignment.bottomRight,
-                                          child: CircleAvatar(
-                                            backgroundColor: Colors.white,
-                                            radius: 18.0,
-                                            child: Icon(
-                                              Icons.camera_alt,
-                                              size: 20.0,
-                                              color: Color(0xFF404040),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        if (headProfilePic != null) ...[
-                          IconButton(
-                              onPressed: () {
-                                _cropImage();
-                              },
-                              icon: const Icon(Icons.crop))
-                        ],
-                        const SizedBox(height: 10),
-                        _buildPersonForm("House-holder"),
-                      ],
-                    ),
-                  ),
-                ]),
-                const SizedBox(height: 10),
-                Column(
-                  children: [
-                    const SizedBox(height: 10),
+      body: ModalProgressHUD(
+        inAsyncCall: _loading,
+        progressIndicator: LoadingAnimationWidget.twistingDots(
+          leftDotColor: const Color.fromRGBO(5, 111, 146, 1),
+          rightDotColor: Theme.of(context).colorScheme.primary,
+          size: 40,
+        ),
+        child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 5),
+            child: SingleChildScrollView(
+              controller: scrollController,
+              child: Column(
+                children: [
+                  Column(children: [
                     Row(
                       children: [
                         Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8.0, vertical: 0),
-                            child: AppConstantText.spouse),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 0),
+                          child: AppConstantText.headOfFamily,
+                        ),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -241,23 +145,30 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                                     const Color.fromARGB(255, 168, 162, 162),
                                 child: GestureDetector(
                                   onTap: () async {
-                                    final wSelectedImage = await ImagePicker()
+                                    final hSelectedImage = await ImagePicker()
                                         .pickImage(source: ImageSource.gallery);
-                                    if (wSelectedImage != null) {
-                                      File wConvertedFile =
-                                          File(wSelectedImage.path);
+                                    if (hSelectedImage != null) {
+                                      File convertedFile =
+                                          File(hSelectedImage.path);
+
+                                      // Crop feature for convertedFile of house-holder
+
                                       setState(() {
-                                        wifeProfilePic = wConvertedFile;
-                                        print("setstate triggered");
+                                        headProfilePic = convertedFile;
                                       });
                                       print("Image selected");
                                     } else {
-                                      print("No image selected");
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: AppConstantText.selectImage,
+                                        ),
+                                      );
                                     }
                                   },
                                   child: Column(
                                     children: [
-                                      if (wifeProfilePic == null) ...[
+                                      if (headProfilePic == null) ...[
                                         const SizedBox(
                                           height: 40,
                                         ),
@@ -277,8 +188,8 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                                           radius: 58.0,
                                           backgroundColor: Colors.transparent,
                                           backgroundImage:
-                                              wifeProfilePic != null
-                                                  ? FileImage(wifeProfilePic!)
+                                              headProfilePic != null
+                                                  ? FileImage(headProfilePic!)
                                                   : null,
                                           child: const Align(
                                             alignment: Alignment.bottomRight,
@@ -300,36 +211,135 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                               ),
                             ),
                           ),
-                          if (wifeProfilePic != null) ...[
+                          if (headProfilePic != null) ...[
                             IconButton(
                                 onPressed: () {
-                                  _wCropImage();
+                                  _cropImage();
                                 },
                                 icon: const Icon(Icons.crop))
                           ],
                           const SizedBox(height: 10),
-                          _buildPersonForm("Spouse"),
+                          _buildPersonForm("House-holder"),
                         ],
                       ),
                     ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
+                  ]),
+                  const SizedBox(height: 10),
+                  Column(
                     children: [
-                      Expanded(flex: 3, child: _buildCancelButton()),
-                      const SizedBox(
-                        width: 10,
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 0),
+                              child: AppConstantText.spouse),
+                        ],
                       ),
-                      Expanded(flex: 3, child: _buildRegisterNowButton()),
+                      const SizedBox(height: 10),
+                      Card(
+                        elevation: 0,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 10),
+                            Align(
+                              alignment: Alignment.topCenter,
+                              child: SizedBox(
+                                child: CircleAvatar(
+                                  radius: 60.0,
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 168, 162, 162),
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      final wSelectedImage = await ImagePicker()
+                                          .pickImage(
+                                              source: ImageSource.gallery);
+                                      if (wSelectedImage != null) {
+                                        File wConvertedFile =
+                                            File(wSelectedImage.path);
+                                        setState(() {
+                                          wifeProfilePic = wConvertedFile;
+                                        });
+                                      } else {
+                                        print("No image selected");
+                                      }
+                                    },
+                                    child: Column(
+                                      children: [
+                                        if (wifeProfilePic == null) ...[
+                                          const SizedBox(
+                                            height: 40,
+                                          ),
+                                          const Expanded(
+                                            child: Align(
+                                              alignment: Alignment.center,
+                                              child: Icon(
+                                                Icons.person_add,
+                                                size: 30,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                        Expanded(
+                                          child: CircleAvatar(
+                                            radius: 58.0,
+                                            backgroundColor: Colors.transparent,
+                                            backgroundImage:
+                                                wifeProfilePic != null
+                                                    ? FileImage(wifeProfilePic!)
+                                                    : null,
+                                            child: const Align(
+                                              alignment: Alignment.bottomRight,
+                                              child: CircleAvatar(
+                                                backgroundColor: Colors.white,
+                                                radius: 18.0,
+                                                child: Icon(
+                                                  Icons.camera_alt,
+                                                  size: 20.0,
+                                                  color: Color(0xFF404040),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            if (wifeProfilePic != null) ...[
+                              IconButton(
+                                  onPressed: () {
+                                    _wCropImage();
+                                  },
+                                  icon: const Icon(Icons.crop))
+                            ],
+                            const SizedBox(height: 10),
+                            _buildPersonForm("Spouse"),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 10),
-              ],
-            ),
-          )),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Row(
+                      children: [
+                        Expanded(flex: 3, child: _buildCancelButton()),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(flex: 3, child: _buildRegisterNowButton()),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
+            )),
+      ),
     );
   }
 
@@ -393,12 +403,12 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
         setState(() {
           validate = true; // Set validation to true when button is pressed
         });
-
         if (_validateForm()) {
           if (wifeProfilePic != null) {
             if (_validateWifeForm()) {
               saveUser();
             } else {
+              _hideLoading();
               setState(() {
                 scrollController.animateTo(
                   scrollController.position.minScrollExtent,
@@ -407,15 +417,14 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 );
               });
               ScaffoldMessenger.of(context).showSnackBar(
-                 SnackBar(
+                SnackBar(
                   content: AppConstantText.fillRequiredFieldsSpouseAlert,
                 ),
               );
             }
-          }
-          // _onLoading();
-          else {
+          } else {
             saveUser();
+            _hideLoading();
           }
         } else {
           setState(() {
@@ -430,8 +439,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
               content: AppConstantText.fillRequiredFieldsAlert,
             ),
           );
-
-          // _hideLoading();
         }
       },
       style: ElevatedButton.styleFrom(
@@ -474,6 +481,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 ],
               );
             });
+     
       },
       style: ElevatedButton.styleFrom(
           side: AppBorderStyle.colorOutlinedBorderBtn,
@@ -590,11 +598,10 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
             labelStyle: AppTextStyles.labelStyle,
-            enabledBorder:AppBorderStyle.enabledBorder,
-            focusedBorder:AppBorderStyle.focusedBorder,
+            enabledBorder: AppBorderStyle.enabledBorder,
+            focusedBorder: AppBorderStyle.focusedBorder,
             errorText: validate ? 'Required' : null,
-            errorStyle:
-                AppTextStyles.errorStyle,
+            errorStyle: AppTextStyles.errorStyle,
           ),
           onChanged: (value) {
             if (value.length == 6) {
@@ -720,7 +727,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
       String wDistrict = wifeDistrictController.text.trim();
       String wCity = wifeCityController.text.trim();
       String wCurrentAddress = wifeCurrentAddressController.text.trim();
-
       String hContact = "+91$hContactString";
       String wContact = "+91$wContactString";
 
@@ -731,7 +737,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
           String? wifeDownloadUrl;
 
           if (wifeProfilePic != null) {
-            _onLoading();
+            // _onLoading();
             wifeDownloadUrl =
                 await uploadFile(wifeProfilePic!, "wifeProfilePictures");
             if (wName.isNotEmpty &&
@@ -739,6 +745,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 wContact.isNotEmpty &&
                 wCity.isNotEmpty) {
               if (validationWifeResult == null) {
+                _onLoading();
                 userData = {
                   "hProfilePic": headDownloadUrl,
                   "hName": hName.capitalizeFirst,
@@ -764,7 +771,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   "wCity": wCity.capitalizeFirst,
                   "wCurrentAddress": wCurrentAddress.capitalizeFirst,
                 };
-                // _onLoading();
                 await FirebaseFirestore.instance
                     .collection("directory-users")
                     .add(userData);
@@ -786,22 +792,36 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   ),
                 );
                 _hideLoading();
-                // Navigator.pop(context);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MainScreen()));
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(validationWifeResult)),
                 );
-                // _hideLoading();
               }
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
-                 SnackBar(
-                  content:
-                     AppConstantText.fillRequiredFieldsSpouseAlert ,
+                SnackBar(
+                  content: AppConstantText.fillRequiredFieldsSpouseAlert,
                 ),
               );
-              // _hideLoading();
+              _hideLoading();
             }
+          } else if (wName.isNotEmpty ||
+              wGotra.isNotEmpty ||
+              wOccupation.isNotEmpty ||
+              wContact.isNotEmpty ||
+              wBirthplace.isNotEmpty ||
+              wPinCode.isNotEmpty ||
+              wCity.isNotEmpty ||
+              wDistrict.isNotEmpty ||
+              wState.isNotEmpty ||
+              wCurrentAddress.isNotEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: AppConstantText.selectSpouseImage,
+              ),
+            );
           } else {
             _onLoading();
             userData = {
@@ -845,7 +865,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
               );
             });
             ScaffoldMessenger.of(context).showSnackBar(
-               SnackBar(
+              SnackBar(
                 content: AppConstantText.userSavedAlert,
               ),
             );
@@ -854,6 +874,8 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 context, MaterialPageRoute(builder: (context) => MainScreen()));
           }
         } else {
+          _hideLoading();
+          print("HIDE LOADING CALLED");
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(validationResult)),
           );
@@ -866,6 +888,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
           });
         }
       } else {
+        _hideLoading();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: AppConstantText.selectImage,
@@ -885,18 +908,15 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
       print("Error saving user: $error");
       // _hideLoading();
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(
+        SnackBar(
           content: AppConstantText.wentWrong,
         ),
       );
     } finally {
-      // _hideLoading(); // Hide loading indicator whether there's an error or not
+      _hideLoading(); // Hide loading indicator whether there's an error or not
       setState(() {
         _loading = false;
-        headProfilePic = null;
-        wifeProfilePic = null;
       });
-      // Navigator.pop(context); // Close the loading dialog
     }
   }
 
@@ -969,37 +989,47 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
     wifeDistrictController.clear();
     wifeCityController.clear();
     wifeCurrentAddressController.clear();
+    headProfilePic = null;
+    wifeProfilePic = null;
   }
 
   void _onLoading() {
-    setState(() {
-      _loading = true;
-    });
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return SizedBox(
-          height: 50,
-          width: 50,
-          child: Center(
-            child: LoadingAnimationWidget.twistingDots(
-              leftDotColor: const Color.fromRGBO(5, 111, 146, 1),
-              rightDotColor: Theme.of(context).colorScheme.primary,
-              size: 20,
+    _loading = true;
+    if (_loading = true) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return SizedBox(
+            height: 50,
+            width: 50,
+            child: Center(
+              child: LoadingAnimationWidget.twistingDots(
+                leftDotColor: const Color.fromRGBO(5, 111, 146, 1),
+                rightDotColor: Theme.of(context).colorScheme.primary,
+                size: 20,
+              ),
             ),
-          ),
-        );
-      },
-    );
+          );
+        },
+      );
+    } else {
+      Container();
+    }
   }
 
   void _hideLoading() {
     // Navigator.pop(context); // Close the loading dialog
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => MainScreen()));
+    print("VALUE OF LOADING $_loading");
     setState(() {
       _loading = false;
+    });
+    setState(() {
+      scrollController.animateTo(
+        scrollController.position.minScrollExtent,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 500),
+      );
     });
   }
 

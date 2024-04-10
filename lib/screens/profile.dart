@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_directory_app/resources.dart';
+import 'package:flutter_directory_app/screens/customer_support.dart';
+import 'package:flutter_directory_app/screens/developer_screen.dart';
 import 'package:flutter_directory_app/screens/home_page.dart';
 import 'package:flutter_directory_app/main.dart';
 import 'package:flutter_directory_app/providers/phone_number_notifier.dart';
@@ -59,17 +62,31 @@ class _MyProfileState extends ConsumerState<MyProfile> {
                 semanticContainer: true,
                 child: Column(
                   children: [
-                    ListTile(
-                      leading: GestureDetector(
-                        child: Image.asset(Assets.customerSupport),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const CustomerSupport()));
+                      },
+                      child: ListTile(
+                        leading: GestureDetector(
+                          child: Image.asset(Assets.customerSupport),
+                        ),
+                        title: AppConstantText.customerSupport,
+                        trailing: IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const CustomerSupport()));
+                            },
+                            icon: const Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              size: 18,
+                            )),
                       ),
-                      title: AppConstantText.customerSupport,
-                      trailing: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.arrow_forward_ios_outlined,
-                            size: 20,
-                          )),
                     ),
                     const Divider(
                       color: Color.fromRGBO(222, 220, 220, 1),
@@ -77,11 +94,10 @@ class _MyProfileState extends ConsumerState<MyProfile> {
                     ),
                     GestureDetector(
                       onTap: () {
-                          Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const OrganizingCommittee()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => OrganizingCommittee()));
                       },
                       child: ListTile(
                         leading: GestureDetector(
@@ -94,11 +110,11 @@ class _MyProfileState extends ConsumerState<MyProfile> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          const OrganizingCommittee()));
+                                          OrganizingCommittee()));
                             },
                             icon: const Icon(
                               Icons.arrow_forward_ios_outlined,
-                              size: 20,
+                              size: 18,
                             )),
                       ),
                     ),
@@ -106,17 +122,31 @@ class _MyProfileState extends ConsumerState<MyProfile> {
                       color: Color.fromRGBO(222, 220, 220, 1),
                       thickness: 0.5,
                     ),
-                    ListTile(
-                      leading: GestureDetector(
-                        child: Image.asset(Assets.customerSupport),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const DeveloperScreen()));
+                      },
+                      child: ListTile(
+                        leading: GestureDetector(
+                          child: Image.asset(Assets.customerSupport),
+                        ),
+                        title: AppConstantText.developedBy,
+                        trailing: IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const DeveloperScreen()));
+                            },
+                            icon: const Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              size: 18,
+                            )),
                       ),
-                      title: AppConstantText.developedBy,
-                      trailing: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.arrow_forward_ios_outlined,
-                            size: 20,
-                          )),
                     ),
                     const Divider(
                       color: Color.fromRGBO(222, 220, 220, 1),

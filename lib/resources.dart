@@ -16,11 +16,12 @@ class Assets {
   static String man1 = 'assets/images/man.webp';
   static String man2 = 'assets/images/man2.jpg';
   static String man3 = 'assets/images/man3.jpg';
-   static String woman1 = 'assets/images/woman1.jpg';
+  static String woman1 = 'assets/images/woman1.jpg';
   static String woman2 = 'assets/images/woman2.jpg';
   static String family1 = 'assets/images/family.png';
   static String family2 = 'assets/images/family2.jpg';
-
+  static String customerCare = 'assets/images/customerCare.png';
+  static String ashishJain = 'assets/images/AshishJain.jpg';
 }
 
 class AppTextStyles {
@@ -28,6 +29,28 @@ class AppTextStyles {
       fontSize: 20,
       fontWeight: FontWeight.w600,
       color: Color.fromRGBO(0, 0, 0, 1));
+
+  static TextStyle customerSupportHeading = const TextStyle(
+      fontSize: 25,
+      fontWeight: FontWeight.w600,
+      color: Color.fromRGBO(19, 80, 124, 1));
+
+  static TextStyle developerHeading = const TextStyle(
+      fontSize: 15,
+      fontWeight: FontWeight.w600,
+      color: Color.fromRGBO(19, 80, 124, 1));
+
+  static TextStyle developerSmallText = const TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w600,
+    color: Color.fromRGBO(122, 122, 122, 1),
+  );
+
+  static TextStyle developerUrl = const TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w600,
+    color: Color.fromRGBO(19, 80, 124, 1),
+  );
 
   static TextStyle subHeading =
       const TextStyle(fontSize: 14, fontWeight: FontWeight.w400);
@@ -105,6 +128,8 @@ class AppConstantText {
   static Text selectSpouseImage =
       const Text('Please select an image for spouse to continue');
   static Text cancelAlert = const Text('Are you sure you want to exit?');
+  static Text deleteAlert = const Text('Are you sure you want to delete?');
+  static Text yesDeleteAlert = const Text('Yes, delete');
   static Text noAlert = const Text('No');
   static Text yesAlert = const Text('Yes, exit');
   static Text userSavedAlert = const Text('User Saved Successfully!');
@@ -243,6 +268,68 @@ class AppConstantText {
 
   static Text saveBtn = Text("Save", style: AppTextStyles.buttonText);
   static Text profileSavedAlert = const Text('Profile Saved Successfully!');
+
+  // customer-support
+
+  static Text customerSupportAppBarText = Text(
+    "Customer Support",
+    style: AppTextStyles.heading,
+  );
+  static Text customerSupportHeadingText1 = Text(
+    "Hello, ",
+    style: AppTextStyles.customerSupportHeading,
+  );
+
+  static Text customerSupportHeadingText2 = Text(
+    "How can we help you?",
+    style: AppTextStyles.customerSupportHeading,
+  );
+
+  static Text emailText = Text(
+    "Sent us an E-mail",
+    style: AppTextStyles.listTileHeading,
+  );
+
+  static Text emailAddress = Text(
+    "vidhi.jain@anktech.co.in",
+    style: AppTextStyles.listTileSubHeading,
+  );
+
+  static Text callText = Text(
+    "Contact us",
+    style: AppTextStyles.listTileHeading,
+  );
+
+  static Text phoneNumber = Text(
+    "+91 9462546455",
+    style: AppTextStyles.listTileSubHeading,
+  );
+
+  // developer-screen
+  static Text developerHeading = Text(
+    "AnkTech Softwares Pvt. Ltd.",
+    style: AppTextStyles.developerHeading,
+  );
+  static Text developerPhoneNumText = Text(
+    "Phone Number : ",
+    style: AppTextStyles.listTileHeading,
+  );
+  static Text developerPhoneNum = Text(
+    " 077289 20139",
+    style: AppTextStyles.developerSmallText,
+  );
+  static Text urlText = Text('Visit Us', style: AppTextStyles.developerUrl);
+  static Text developedAppBarText = Text(
+    "Developed By",
+    style: AppTextStyles.heading,
+  );
+
+  // organizing-committee
+
+  static Text committeeAppBar = Text(
+          "Organizing-Committee",
+          style: AppTextStyles.heading,
+        );
 }
 
 class AppSponsorText {
@@ -264,9 +351,9 @@ class AppSponsorText {
 
   // sponsor-page
   static Text sponsorTitle = Text(
-          "Sponsors",
-          style: AppTextStyles.heading,
-        );
+    "Sponsors",
+    style: AppTextStyles.heading,
+  );
   static Text noDataFound = const Text("No data Found");
 }
 
