@@ -481,7 +481,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 ],
               );
             });
-     
       },
       style: ElevatedButton.styleFrom(
           side: AppBorderStyle.colorOutlinedBorderBtn,
@@ -698,6 +697,228 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
     return null; // Return null if phone number is valid
   }
 
+  // Future<void> saveUser() async {
+  //   Map<String, dynamic> userData;
+  //   var sharedPref = await SharedPreferences.getInstance();
+  //   var showNum = sharedPref.getString(MyAppState.PHONENUM);
+  //   String? validationResult = _validatePhoneNumber(headContactController.text);
+  //   String? validationWifeResult =
+  //       _validatePhoneNumber(wifeContactController.text);
+  //   print("VALIDATION WIFE RESULT $validationWifeResult");
+  //   try {
+  //     String hName = headNameController.text.trim();
+  //     String hGotra = headGotraController.text.trim();
+  //     String hOccupation = headOccupationController.text.trim();
+  //     String hContactString = headContactController.text.trim();
+  //     String hBirthplace = headBirthplaceController.text.trim();
+  //     String hPinCode = headCityPinController.text.trim();
+  //     String hState = headStateController.text.trim();
+  //     String hDistrict = headDistrictController.text.trim();
+  //     String hCity = headCityController.text.trim();
+  //     String hCurrentAddress = headCurrentAddressController.text.trim();
+  //     String wName = wifeNameController.text.trim();
+  //     String wGotra = wifeGotraController.text.trim();
+  //     String wOccupation = wifeOccupationController.text.trim();
+  //     String wContactString = wifeContactController.text.trim();
+  //     String wBirthplace = wifeBirthplaceController.text.trim();
+  //     String wPinCode = wifeCityPinController.text.trim();
+  //     String wState = wifeStateController.text.trim();
+  //     String wDistrict = wifeDistrictController.text.trim();
+  //     String wCity = wifeCityController.text.trim();
+  //     String wCurrentAddress = wifeCurrentAddressController.text.trim();
+  //     String hContact = "+91$hContactString";
+  //     String wContact = "+91$wContactString";
+
+  //     if (hName.isNotEmpty && hGotra.isNotEmpty && headProfilePic != null) {
+  //       if (validationResult == null) {
+  //         final headDownloadUrl =
+  //             await uploadFile(headProfilePic!, "headProfilePictures");
+  //         String? wifeDownloadUrl;
+
+  //         if (wifeProfilePic != null) {
+  //           // _onLoading();
+  //           wifeDownloadUrl =
+  //               await uploadFile(wifeProfilePic!, "wifeProfilePictures");
+  //           if (wName.isNotEmpty &&
+  //               wGotra.isNotEmpty &&
+  //               wContact.isNotEmpty &&
+  //               wCity.isNotEmpty) {
+  //             if (validationWifeResult == null) {
+  //               _onLoading();
+  //               userData = {
+  //                 "hProfilePic": headDownloadUrl,
+  //                 "hName": hName.capitalizeFirst,
+  //                 "hGotra": hGotra.capitalizeFirst,
+  //                 "hOccupation": hOccupation.capitalizeFirst,
+  //                 "hContact": hContact,
+  //                 "hBirthPlace": hBirthplace.capitalizeFirst,
+  //                 "hPinCode": hPinCode,
+  //                 "hState": hState.capitalizeFirst,
+  //                 "hDistrict": hDistrict.capitalizeFirst,
+  //                 "hCity": hCity.capitalizeFirst,
+  //                 "hCurrentAddress": hCurrentAddress.capitalizeFirst,
+  //                 "addedBy": showNum,
+  //                 "wProfilePic": wifeDownloadUrl,
+  //                 "wName": wName.capitalizeFirst,
+  //                 "wGotra": wGotra.capitalizeFirst,
+  //                 "wOccupation": wOccupation.capitalizeFirst,
+  //                 "wContact": wContact,
+  //                 "wBirthPlace": wBirthplace.capitalizeFirst,
+  //                 "wPinCode": wPinCode,
+  //                 "wState": wState.capitalizeFirst,
+  //                 "wDistrict": wDistrict.capitalizeFirst,
+  //                 "wCity": wCity.capitalizeFirst,
+  //                 "wCurrentAddress": wCurrentAddress.capitalizeFirst,
+  //               };
+  //               await FirebaseFirestore.instance
+  //                   .collection("directory-users")
+  //                   .add(userData);
+
+  //               print("User Created!");
+  //               _hideLoading();
+  //               print("ADDED BY : ${showNum}");
+  //               submitForm();
+  //               setState(() {
+  //                 scrollController.animateTo(
+  //                   scrollController.position.minScrollExtent,
+  //                   curve: Curves.easeOut,
+  //                   duration: const Duration(milliseconds: 500),
+  //                 );
+  //               });
+  //               ScaffoldMessenger.of(context).showSnackBar(
+  //                 SnackBar(
+  //                   content: AppConstantText.userSavedAlert,
+  //                 ),
+  //               );
+  //               _hideLoading();
+  //               Navigator.push(context,
+  //                   MaterialPageRoute(builder: (context) => MainScreen()));
+  //             } else {
+  //               ScaffoldMessenger.of(context).showSnackBar(
+  //                 SnackBar(content: Text(validationWifeResult)),
+  //               );
+  //             }
+  //           } else {
+  //             ScaffoldMessenger.of(context).showSnackBar(
+  //               SnackBar(
+  //                 content: AppConstantText.fillRequiredFieldsSpouseAlert,
+  //               ),
+  //             );
+  //             _hideLoading();
+  //           }
+  //         } else if (wName.isNotEmpty ||
+  //             wGotra.isNotEmpty ||
+  //             wOccupation.isNotEmpty ||
+  //             wContact.isNotEmpty ||
+  //             wBirthplace.isNotEmpty ||
+  //             wPinCode.isNotEmpty ||
+  //             wCity.isNotEmpty ||
+  //             wDistrict.isNotEmpty ||
+  //             wState.isNotEmpty ||
+  //             wCurrentAddress.isNotEmpty) {
+  //           ScaffoldMessenger.of(context).showSnackBar(
+  //             SnackBar(
+  //               content: AppConstantText.selectSpouseImage,
+  //             ),
+  //           );
+  //         } else {
+  //           _onLoading();
+  //           userData = {
+  //             "hProfilePic": headDownloadUrl,
+  //             "hName": hName.capitalizeFirst,
+  //             "hGotra": hGotra.capitalizeFirst,
+  //             "hOccupation": hOccupation.capitalizeFirst,
+  //             "hContact": hContact,
+  //             "hBirthPlace": hBirthplace.capitalizeFirst,
+  //             "hPinCode": hPinCode,
+  //             "hState": hState.capitalizeFirst,
+  //             "hDistrict": hDistrict.capitalizeFirst,
+  //             "hCity": hCity.capitalizeFirst,
+  //             "hCurrentAddress": hCurrentAddress.capitalizeFirst,
+  //             "addedBy": showNum,
+  //             "wProfilePic": null,
+  //             "wName": null,
+  //             "wGotra": null,
+  //             "wOccupation": null,
+  //             "wContact": null,
+  //             "wBirthPlace": null,
+  //             "wPinCode": null,
+  //             "wState": null,
+  //             "wDistrict": null,
+  //             "wCity": null,
+  //             "wCurrentAddress": null,
+  //           };
+  //           // _onLoading();
+  //           await FirebaseFirestore.instance
+  //               .collection("directory-users")
+  //               .add(userData);
+
+  //           print("User Created!");
+  //           print("ADDED BY : ${showNum}");
+  //           submitForm();
+  //           setState(() {
+  //             scrollController.animateTo(
+  //               scrollController.position.minScrollExtent,
+  //               curve: Curves.easeOut,
+  //               duration: const Duration(milliseconds: 500),
+  //             );
+  //           });
+  //           ScaffoldMessenger.of(context).showSnackBar(
+  //             SnackBar(
+  //               content: AppConstantText.userSavedAlert,
+  //             ),
+  //           );
+  //           // Navigator.pop(context);
+  //           Navigator.push(
+  //               context, MaterialPageRoute(builder: (context) => MainScreen()));
+  //         }
+  //       } else {
+  //         _hideLoading();
+  //         print("HIDE LOADING CALLED");
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(content: Text(validationResult)),
+  //         );
+  //         setState(() {
+  //           scrollController.animateTo(
+  //             scrollController.position.minScrollExtent,
+  //             curve: Curves.easeOut,
+  //             duration: const Duration(milliseconds: 500),
+  //           );
+  //         });
+  //       }
+  //     } else {
+  //       _hideLoading();
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: AppConstantText.selectImage,
+  //         ),
+  //       );
+  //       // _hideLoading();
+  //       // Navigator.pop(context);
+  //       setState(() {
+  //         scrollController.animateTo(
+  //           scrollController.position.minScrollExtent,
+  //           curve: Curves.easeOut,
+  //           duration: const Duration(milliseconds: 500),
+  //         );
+  //       });
+  //     }
+  //   } catch (error) {
+  //     print("Error saving user: $error");
+  //     // _hideLoading();
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: AppConstantText.wentWrong,
+  //       ),
+  //     );
+  //   } finally {
+  //     _hideLoading(); // Hide loading indicator whether there's an error or not
+  //     setState(() {
+  //       _loading = false;
+  //     });
+  //   }
+  // }
+
   Future<void> saveUser() async {
     Map<String, dynamic> userData;
     var sharedPref = await SharedPreferences.getInstance();
@@ -705,7 +926,11 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
     String? validationResult = _validatePhoneNumber(headContactController.text);
     String? validationWifeResult =
         _validatePhoneNumber(wifeContactController.text);
-    print("VALIDATION WIFE RESULT $validationWifeResult");
+
+    setState(() {
+      _loading = true; // Show loading indicator when saving user
+    });
+
     try {
       String hName = headNameController.text.trim();
       String hGotra = headGotraController.text.trim();
@@ -736,8 +961,9 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
               await uploadFile(headProfilePic!, "headProfilePictures");
           String? wifeDownloadUrl;
 
+          print("PRINTINGGGGGGGGGGGGG $wName $wGotra ");
+
           if (wifeProfilePic != null) {
-            // _onLoading();
             wifeDownloadUrl =
                 await uploadFile(wifeProfilePic!, "wifeProfilePictures");
             if (wName.isNotEmpty &&
@@ -745,7 +971,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 wContact.isNotEmpty &&
                 wCity.isNotEmpty) {
               if (validationWifeResult == null) {
-                _onLoading();
                 userData = {
                   "hProfilePic": headDownloadUrl,
                   "hName": hName.capitalizeFirst,
@@ -776,7 +1001,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                     .add(userData);
 
                 print("User Created!");
-                _hideLoading();
                 print("ADDED BY : ${showNum}");
                 submitForm();
                 setState(() {
@@ -785,13 +1009,13 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                     curve: Curves.easeOut,
                     duration: const Duration(milliseconds: 500),
                   );
+                  _loading = false; // Hide loading indicator
                 });
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: AppConstantText.userSavedAlert,
                   ),
                 );
-                _hideLoading();
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => MainScreen()));
               } else {
@@ -805,25 +1029,25 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                   content: AppConstantText.fillRequiredFieldsSpouseAlert,
                 ),
               );
-              _hideLoading();
             }
-          } else if (wName.isNotEmpty ||
-              wGotra.isNotEmpty ||
-              wOccupation.isNotEmpty ||
-              wContact.isNotEmpty ||
-              wBirthplace.isNotEmpty ||
-              wPinCode.isNotEmpty ||
-              wCity.isNotEmpty ||
-              wDistrict.isNotEmpty ||
-              wState.isNotEmpty ||
-              wCurrentAddress.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: AppConstantText.selectSpouseImage,
-              ),
-            );
-          } else {
-            _onLoading();
+          }
+          // else if (wName != "" ||
+          //     wGotra != "" ||
+          //     wOccupation != "" ||
+          //     wContact != "" ||
+          //     wBirthplace != "" ||
+          //     wPinCode != "" ||
+          //     wCity != "" ||
+          //     wDistrict != ""  ||
+          //     wState != ""  ||
+          //     wCurrentAddress != "") {
+          //   ScaffoldMessenger.of(context).showSnackBar(
+          //     SnackBar(
+          //       content: AppConstantText.selectSpouseImage,
+          //     ),
+          //   );
+          // }
+          else {
             userData = {
               "hProfilePic": headDownloadUrl,
               "hName": hName.capitalizeFirst,
@@ -849,7 +1073,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
               "wCity": null,
               "wCurrentAddress": null,
             };
-            // _onLoading();
+
             await FirebaseFirestore.instance
                 .collection("directory-users")
                 .add(userData);
@@ -863,6 +1087,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 curve: Curves.easeOut,
                 duration: const Duration(milliseconds: 500),
               );
+              _loading = false; // Hide loading indicator
             });
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -874,7 +1099,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
                 context, MaterialPageRoute(builder: (context) => MainScreen()));
           }
         } else {
-          _hideLoading();
           print("HIDE LOADING CALLED");
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(validationResult)),
@@ -885,35 +1109,33 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
               curve: Curves.easeOut,
               duration: const Duration(milliseconds: 500),
             );
+            _loading = false; // Hide loading indicator
           });
         }
       } else {
-        _hideLoading();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: AppConstantText.selectImage,
           ),
         );
-        // _hideLoading();
-        // Navigator.pop(context);
         setState(() {
           scrollController.animateTo(
             scrollController.position.minScrollExtent,
             curve: Curves.easeOut,
             duration: const Duration(milliseconds: 500),
           );
+          _loading = false; // Hide loading indicator
         });
       }
     } catch (error) {
       print("Error saving user: $error");
-      // _hideLoading();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: AppConstantText.wentWrong,
         ),
       );
-    } finally {
-      _hideLoading(); // Hide loading indicator whether there's an error or not
+
+      // If there's an error, hide loading indicator
       setState(() {
         _loading = false;
       });

@@ -56,8 +56,7 @@ class _SponsorsState extends State<Sponsors> {
             if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.hasData && snapshot.data != null) {
                 results = snapshot.data!.docs;
-                return 
-                GridView.builder(
+                return GridView.builder(
                     itemCount: results.length,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
@@ -65,7 +64,6 @@ class _SponsorsState extends State<Sponsors> {
                       crossAxisCount: 1,
                     ),
                     itemBuilder: (context, index) {
-
                       Future<Widget> editIcon() async {
                         var sharedPref = await SharedPreferences.getInstance();
                         bool? isAdmin = sharedPref.getBool(MyAppState.ISADMIN);
@@ -130,7 +128,7 @@ class _SponsorsState extends State<Sponsors> {
                                                       "Sponsor deleted successfully"),
                                                 ),
                                               );
-                                               Navigator.of(context).pop(false);
+                                              Navigator.of(context).pop(false);
                                             } catch (error) {
                                               print(
                                                   "Error deleting sponsor: $error");
@@ -263,8 +261,6 @@ class _SponsorsState extends State<Sponsors> {
                         ),
                       );
                     });
-              
-              
               } else {
                 return Center(child: AppSponsorText.noDataFound);
               }
