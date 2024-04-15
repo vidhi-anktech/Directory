@@ -18,7 +18,7 @@ import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 
 class RegistrationPage extends ConsumerStatefulWidget {
-  RegistrationPage({
+  const RegistrationPage({
     super.key,
   });
 
@@ -962,7 +962,6 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
           String? wifeDownloadUrl;
 
           print("PRINTINGGGGGGGGGGGGG $wName $wGotra ");
-
           if (wifeProfilePic != null) {
             wifeDownloadUrl =
                 await uploadFile(wifeProfilePic!, "wifeProfilePictures");
@@ -1038,8 +1037,8 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
           //     wBirthplace != "" ||
           //     wPinCode != "" ||
           //     wCity != "" ||
-          //     wDistrict != ""  ||
-          //     wState != ""  ||
+          //     wDistrict != "" ||
+          //     wState != "" ||
           //     wCurrentAddress != "") {
           //   ScaffoldMessenger.of(context).showSnackBar(
           //     SnackBar(
@@ -1047,6 +1046,7 @@ class _RegistrationPageState extends ConsumerState<RegistrationPage> {
           //     ),
           //   );
           // }
+
           else {
             userData = {
               "hProfilePic": headDownloadUrl,

@@ -215,9 +215,11 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Row(
                           children: [
-                            AppConstantText.currentAddress,
-                            Text("${widget.userData["hCurrentAddress"]}",
-                                style: AppTextStyles.subHeading),
+                            Expanded(child: AppConstantText.currentAddress),
+                            Expanded(
+                              child: Text("${widget.userData["hCurrentAddress"]}",
+                                  style: AppTextStyles.subHeading),
+                            ),
                           ],
                         ),
                       ),
@@ -421,9 +423,11 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Row(
                             children: [
-                             AppConstantText.currentAddress,
-                              Text("${widget.userData["wCurrentAddress"]}",
-                                  style: AppTextStyles.subHeading),
+                             Expanded(child: AppConstantText.currentAddress),
+                              Expanded(
+                                child: Text("${widget.userData["wCurrentAddress"]}",
+                                    style: AppTextStyles.subHeading),
+                              ),
                             ],
                           ),
                         ),
